@@ -20,6 +20,7 @@ class ChatRoom(models.Model):
 class ChatRoomJoin(models.Model):
 
     chatroom = models.ForeignKey(to="ChatRoom", on_delete=models.CASCADE, related_name="room_join", db_column="chatroom_id")
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="user_join", db_column="user_id")
     created_at = models.DateTimeField(auto_now=True)
 
     class Meta:
