@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Chat Room</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <textarea id="chat-log" cols="100" rows="20"></textarea><br>
+    <input id="chat-message-input" type="text" size="100"><br>
+    <input id="chat-message-submit" type="button" value="Send">
+
+    <script>
+      const chatLog = document.querySelector('#chat-log')
+      let roomId = '';
+      let user = {};
+      let messages = {};
+
+      const baseURL = 'http://127.0.0.1:8000'
+      const API = axios.create({
+        baseURL: baseURL,
+      })
+
+      const connectWS = async () => {
+        const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/chat/'
+            + roomId
+            + '/'
+        );
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            chatLog.value += (data.user.username + ":" + data.message + '\n');
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function(e) {
+            if (e.key === 'Enter') {  // enter, return
+                document.querySelector('#chat-message-submit').click();
+            }
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'user': user,
+                'room_id': roomId,
+            }));
+            messageInputDom.value = '';
+        };
+      }
+      
+      const getRoomData = async () => {
+        const current_location = window.location.href;
+        const room_id = current_location[current_location.length-2];
+        try {
+          const response = await API.get(`/chat/API/${room_id}`);
+          return response.data;
+        } catch (error) {
+          console.error("Error fetching room data:", error);
+          return null;
+        }
+      };
+
+      const loadRoomData = async () => {
+        const roomData = await getRoomData();
+        roomId = roomData.room_id
+        user = roomData.user
+        messages = roomData.messages;
+        for (message of messages){
+          chatLog.value += (message.user.username + ":" + message.message + "\n")
+        }
+        connectWS();
+      }
+
+      loadRoomData()
+    </script>
+</body>
+</html>

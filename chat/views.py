@@ -30,7 +30,7 @@ def get_room_join_permission(chat_room, user):
 
 
 def index(request):
-    return render(request, "chat/index.html")
+    return render(request, "chat/APIindex.html")
 
 
 class chatRoomView(View):
@@ -53,15 +53,16 @@ class chatRoomView(View):
         
     
     def get(self, request, room_id):
-        user = request.user
-        try:
-            chat_room = ChatRoom.objects.get(pk=room_id)
-            if not room_join_permission(chat_room, user):
-                return redirect("chat:index")
-        except ObjectDoesNotExist:
-            chat_room = ChatRoom.objects.create(owner=user)
-            get_room_join_permission(chat_room, user)
-        return self.chat_room_render(request, chat_room, user)
+        return render(request, 'chat/APIroom.html')
+        # user = request.user
+        # try:
+        #     chat_room = ChatRoom.objects.get(pk=room_id)
+        #     if not room_join_permission(chat_room, user):
+        #         return redirect("chat:index")
+        # except ObjectDoesNotExist:
+        #     chat_room = ChatRoom.objects.create(owner=user)
+        #     get_room_join_permission(chat_room, user)
+        # return self.chat_room_render(request, chat_room, user)
     
 
 class ChatRoomAPIView(APIView):
@@ -90,7 +91,7 @@ class ChatRoomAPIView(APIView):
         try:
             chat_room = ChatRoom.objects.get(pk=room_id)
             if not room_join_permission(chat_room, user):
-                return Response("채팅방에 접근할 권한이 없습니다.", status=status.HTTP_401_UNAUTHORIZED)
+                return Response("채팅방에 접근할 권한이 없습니다.", status=status.HTTP_403_FORBIDDEN)
         except ObjectDoesNotExist:
             return Response("채팅방이 존재하지 않습니다.", status=status.HTTP_400_BAD_REQUEST)
         return self.chat_room_render(chat_room, user)

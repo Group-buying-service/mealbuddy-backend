@@ -10,7 +10,7 @@ class ChatRoom(models.Model):
 
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now_add=True)
-    owner = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(to=User, on_delete=models.CASCADE, help_text="채팅방의 소유자")
     # post = models.ForeignKey(to='Chat', on_delete=models.CASCADE)
 
     class Meta:
@@ -18,7 +18,9 @@ class ChatRoom(models.Model):
 
 
 class ChatRoomJoin(models.Model):
-
+    '''
+    채팅방의 접근권한을 관리합니다.
+    '''
     chatroom = models.ForeignKey(to="ChatRoom", on_delete=models.CASCADE, related_name="room_join", db_column="chatroom_id")
     user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="user_join", db_column="user_id")
     created_at = models.DateTimeField(auto_now=True)
