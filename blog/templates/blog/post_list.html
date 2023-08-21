@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="main">
+    <h2 class="main-title">게시판</h2>   
+
+    {% if posts %}    
+    <table class="table list">
+        <colgroup>
+            <col style="width: 10%">
+            <col style= "width: 50%">
+            <col style="width: 20%">
+            <col style="width: 10%">
+          </colgroup>
+        <thead>
+                <tr>
+                    <td>번호</td>
+                    <td>제목</td>
+                    <td>작성자</td>
+                    <td>작성일</td>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in posts %}
+                    <tr>
+                        <td>{{ post.pk }}</td>
+                        <td><a href="{% url 'blog:detail' pk=post.pk %}">{{ post.title }}</a></td>
+                        <td>{{ post.writer }}</td>
+                        <td>{{ post.created_at }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>작성된 게시물이 없습니다.</p>
+    {% endif %}
+    <br/>
+<br/>
+<div class="board-bottom">
+    <ul class="pagination justify-content-center">
+        <!-- 이전페이지 -->
+        {% if posts.has_previous %}        
+            <a class="page-link" href="?page={{ posts.previous_page_number }}"><img src={% static 'prev.png' %} alt="다음"></a>
+        {% else %}
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#"><img src={% static 'prev.png' %} alt="다음"></a>
+        {% endif %}
+        <!-- 페이지리스트 -->
+        {% for page_number in posts.paginator.page_range %}
+        {% if page_number == posts.number %}
+        
+            <a class="num active" href="?page={{ page_number }}">{{ page_number }}</a>
+        {% else %}
+            <a class="num" href="?page={{ page_number }}">{{ page_number }}</a>
+        {% endif %}
+        {% endfor %}
+        <!-- 다음페이지 -->
+        {% if posts.has_next %}
+        
+            <a class="page-link" href="?page={{ posts.next_page_number }}"><img src={% static 'next.png' %} alt=""></a>
+        {% else %}
+        
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#"><img src={% static 'next.png' %} alt=""></a>
+        {% endif %}
+    </ul>
+
+<!-- 페이징처리 끝 -->
+
+    <div class="btn-group">
+        <form action="{% url 'blog:write' %}" method="get">
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ request.GET.next }}">
+            <input type="submit" value="글 작성" class="btn">
+        </form>
+      </div>
+    </div>
+
+</div>
+
+{% endblock %}

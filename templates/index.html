@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="main">
+    <h1>{% trans "Welcome my blog" %}</h1>
+    <br>
+    {% if user.is_authenticated %}
+    <a href="{% url 'blog:list' %}">{% trans '블로그로 바로가기' %}</a>
+    
+    {% else %}
+        <a href="{% url 'user:register' %}">{% trans '회원가입' %}</a>
+        <a href="{% url 'user:login' %}">{% trans '로그인' %}</a>
+    {% endif %}
+
+</div>
+{% endblock %}

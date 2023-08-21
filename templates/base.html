@@ -1,0 +1,49 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'common.css' %}">
+    <link rel="stylesheet" href="{% static 'table.css' %}">
+    <link rel="stylesheet" href="{% static 'list.css' %}">
+    <link rel="stylesheet" href="{% static 'login-join.css' %}">
+    <link rel="stylesheet" href="{% static 'view.css' %}">
+    <link rel="stylesheet" href="{% static 'write.css' %}">
+    <title>
+        {% block title %} {{ title }} {% endblock %}
+    </title>
+</head>
+<body>
+     <!-- header -->
+
+     {% if user.is_authenticated %}
+  <div class="header">    
+        <h1><a href="{% url 'blog:list' %}">Blog</a></h1>
+        <div class="header-click">
+            <p>{% trans '환영합니다 ' %} {{ user.email }} {% trans ' 님.' %}<a href="{% url 'user:logout' %}">로그아웃</a></p>
+            
+    </div>
+</div>
+
+    {% else %}
+    <div class="header">    
+        <h1>Blog</h1>
+        <div class="header-click">
+        <a href="{% url 'user:login' %}">로그인</a>
+        <a href="{% url 'user:register' %}">회원가입</a>        
+    </div>
+</div>
+    {% endif %}        
+        <br><br>
+
+        {% block content %}
+        {% endblock %}    
+              <!-- footer -->
+    
+  <p class="footer">Copyright 2023. Chilli All rights reserved.</p>
+</body>
+
+</html>

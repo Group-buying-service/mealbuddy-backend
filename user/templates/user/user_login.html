@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="main">
+  <div class="container">
+    <h2>로그인 페이지</h2>
+<p class="description">아이디와 비밀번호를 입력하고 로그인하세요</p>
+<form class="login" action="/user/login/" method="post">
+  {% csrf_token %}
+    <div>
+    <label class="label-width" for="id_username">이메일</label>
+    <input type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username"required>    
+  </div>  
+  <div>
+    <label class="label-width" for="id_password">비밀번호</label>
+    <input type="password" name="password" autocomplete="current-password" required="" id="id_password">
+  </div>
+
+    <input class="submit-button" type="submit" value="로그인">
+</form>
+  </div>
+</div>
+
+{% endblock %}
