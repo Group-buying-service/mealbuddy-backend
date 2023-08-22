@@ -122,20 +122,20 @@ class Participants(View):
     
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
-        if 'cancel' in request.data:
-            if request.user in post.recruited_users.all():
-                post.join_number -= 1
-                post.recruited_users.remove(request.user)
-                post.save()
-                return Response({'message': 'Participation canceled successfully.'}, status=status.HTTP_200_OK)
-        elif 'join' in request.data:
-            if post.join_number < post.target_number:
-                post.join_number += 1
-                post.recruited_users.add(request.user)
-                post.save()
-                return Response({'message': 'Successfully participated in the event.'}, status=status.HTTP_200_OK)
-        
-        return Response({'message': 'Invalid request.'}, status=status.HTTP_400_BAD_REQUEST)
+        if request.method == 'POST':
+            if 'cancel' in request.POST:
+                if request.user in post.recruited_users.all(): # 모집한 사용자만 작용
+                    post.join_number -= 1
+                    post.recruited_users.remove(request.user)
+                    post.save()
+            elif 'join' in request.POST:
+                if request.user not in post.recruited_users.all(): # 이미 모집한 사용자라면 아무 동작도 하지 않음
+                    if post.join_number < post.target_number:
+                        post.join_number += 1
+                        post.recruited_users.add(request.user)
+                        post.save()
+            
+        return redirect('blog:detail', pk=pk)
     
 # # 참여버튼
 # class Participants(View):
