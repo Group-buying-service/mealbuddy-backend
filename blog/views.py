@@ -72,6 +72,7 @@ class Update(View):
         }
         return render(request, 'blog/post_edit.html', context)
     
+    
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         form = PostForm(request.POST)
