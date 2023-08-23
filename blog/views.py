@@ -21,12 +21,20 @@ class Index(View):
         page  = request.GET.get('page', '1')
         paginator = Paginator(posts, 5)  # 페이지당 10개씩 보여주기
         page_obj = paginator.get_page(page)
+        selected_category = request.GET.get('category')
+        if selected_category:
+            posts = Post.objects.filter(category=selected_category)
+        else:
+            posts = Post.objects.all()
         
         context = {
             "title": "Blog",
+            'categories': selected_category,
             'posts': page_obj
             
         }
+
+
         return render(request, 'blog/post_list.html', context)
     
 
@@ -71,6 +79,7 @@ class Update(View):
             "title": "Blog"
         }
         return render(request, 'blog/post_edit.html', context)
+    
     
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
@@ -128,13 +137,18 @@ class Participants(View):
                     post.join_number -= 1
                     post.recruited_users.remove(request.user)
                     post.save()
-                    
             elif 'join' in request.POST:
                 if request.user not in post.recruited_users.all(): # 이미 모집한 사용자라면 아무 동작도 하지 않음
                     if post.join_number < post.target_number:
                         post.join_number += 1
-                        post.recruited_users.add(request.user)
+                        post.recruited_users.add(request.user)                        
                         post.save()
+        if post.join_number == post.target_number:
+            post.is_compelete = True  # 참여가 다 찼음을 표시
+        else:
+            post.is_compelete = False
+
+
             
         return redirect('blog:detail', pk=pk)
     
