@@ -128,6 +128,7 @@ class Participants(View):
                     post.join_number -= 1
                     post.recruited_users.remove(request.user)
                     post.save()
+                    
             elif 'join' in request.POST:
                 if request.user not in post.recruited_users.all(): # 이미 모집한 사용자라면 아무 동작도 하지 않음
                     if post.join_number < post.target_number:
