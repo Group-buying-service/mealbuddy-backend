@@ -21,12 +21,20 @@ class Index(View):
         page  = request.GET.get('page', '1')
         paginator = Paginator(posts, 5)  # 페이지당 10개씩 보여주기
         page_obj = paginator.get_page(page)
+        selected_category = request.GET.get('category')
+        if selected_category:
+            posts = Post.objects.filter(category=selected_category)
+        else:
+            posts = Post.objects.all()
         
         context = {
             "title": "Blog",
+            'category': selected_category,
             'posts': page_obj
             
         }
+
+
         return render(request, 'blog/post_list.html', context)
     
 
