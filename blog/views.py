@@ -136,13 +136,11 @@ class Participants(View):
         post = get_object_or_404(Post, pk=pk)
         if request.method == 'POST':
             if 'cancel' in request.POST:
-                # print(post.is_compelete)
                 if request.user in post.recruited_users.all(): # 모집한 사용자만 작용
                     post.join_number -= 1
                     post.recruited_users.remove(request.user)
                     post.save()
             elif 'join' in request.POST:
-                # print(post.is_compelete)
                 if request.user not in post.recruited_users.all(): # 이미 모집한 사용자라면 아무 동작도 하지 않음
                     if post.join_number < post.target_number:
                         post.join_number += 1
@@ -151,7 +149,6 @@ class Participants(View):
                         
             if post.join_number == post.target_number:
                 post.is_compelete = True
-                print(post.is_compelete)
                 post.save()
             else:
                 post.is_compelete = False
