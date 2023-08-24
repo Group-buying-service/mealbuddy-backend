@@ -35,21 +35,21 @@ def index(request):
 
 class chatRoomView(View):
 
-    def chat_room_render(self, request, chat_room, user):
-        messages = ChatMessage.objects.filter(chatroom = chat_room.pk)
-        serialized_messages = ChatMessageSerializer(instance=messages, many=True)
-        serialized_user = {"user_id": user.id, "user_username": user.username}
-        return render(request, "chat/room.html", {"room_id": chat_room.pk, "messages":serialized_messages.data, "user": serialized_user})
+    # def chat_room_render(self, request, chat_room, user):
+    #     messages = ChatMessage.objects.filter(chatroom = chat_room.pk)
+    #     serialized_messages = ChatMessageSerializer(instance=messages, many=True)
+    #     serialized_user = {"user_id": user.id, "user_username": user.username}
+    #     return render(request, "chat/room.html", {"room_id": chat_room.pk, "messages":serialized_messages.data, "user": serialized_user})
     
 
-    def post(self, request, room_id):
-        user = request.user
-        try:
-            chat_room = ChatRoom.objects.get(pk=room_id)
-        except ObjectDoesNotExist:
-            return redirect('chat:index')
-        get_room_join_permission(chat_room, user)
-        return self.chat_room_render(request, chat_room, user)
+    # def post(self, request, room_id):
+    #     user = request.user
+    #     try:
+    #         chat_room = ChatRoom.objects.get(pk=room_id)
+    #     except ObjectDoesNotExist:
+    #         return redirect('chat:index')
+    #     get_room_join_permission(chat_room, user)
+    #     return self.chat_room_render(request, chat_room, user)
         
     
     def get(self, request, room_id):
@@ -68,6 +68,8 @@ class chatRoomView(View):
 class ChatRoomAPIView(APIView):
 
     def chat_room_render(self, chat_room, user):
+        # user_list = chat_room.room_join.all()
+
         messages = ChatMessage.objects.filter(chatroom = chat_room.pk)
         serialized_messages = ChatMessageSerializer(instance=messages, many=True)
         serialized_user = {"user_id": user.id, "user_username": user.username}
@@ -75,8 +77,8 @@ class ChatRoomAPIView(APIView):
     
 
     def post(self, request, room_id):
-        # user = request.user
-        user = User.objects.get(pk=1)
+        user = request.user
+        # user = User.objects.get(pk=1)
         try:
             chat_room = ChatRoom.objects.get(pk=room_id)
         except ObjectDoesNotExist:
@@ -86,10 +88,12 @@ class ChatRoomAPIView(APIView):
         
     
     def get(self, request, room_id):
-        # user = request.user
-        user = User.objects.get(pk=1)
+        user = request.user
+        # user = User.objects.get(pk=1)
         try:
             chat_room = ChatRoom.objects.get(pk=room_id)
+            if chat_room.is_deleted:
+                return Response("삭제된 채팅방입니다.", status=status.HTTP_400_BAD_REQUEST)
             if not room_join_permission(chat_room, user):
                 return Response("채팅방에 접근할 권한이 없습니다.", status=status.HTTP_403_FORBIDDEN)
         except ObjectDoesNotExist:

@@ -10,6 +10,10 @@
     <input id="chat-message-input" type="text" size="100"><br>
     <input id="chat-message-submit" type="button" value="Send">
 
+    <form action="post">
+
+    </form>
+
     <script>
       const chatLog = document.querySelector('#chat-log')
       let roomId = '';
@@ -17,9 +21,11 @@
       let messages = {};
 
       const baseURL = 'http://127.0.0.1:8000'
+      const csrftoken = document.cookie.match(/csrftoken=([^;]+)/)[1];
       const API = axios.create({
         baseURL: baseURL,
       })
+      API.defaults.headers.common['X-CSRFToken'] = csrftoken;
 
       const connectWS = async () => {
         const chatSocket = new WebSocket(
@@ -32,27 +38,46 @@
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            chatLog.value += (data.user.username + ":" + data.message + '\n');
+            if (data.type === "chat.message") {
+              chatLog.value += (data.user.username + ":" + data.message + '\n');
+            }
+            else if (data.type === 'chat.user.join') {
+              chatLog.value += (data.message.message + '\n')
+            }
+            else if (data.type === 'chat.user.leave') {
+              chatLog.value += (data.message.message + '\n')
+            }
+            chatLog.scrollTop = chatLog.scrollHeight;
         };
 
-        chatSocket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
+        chatSocket.onclose = (e) => {
+          console.log(e)
+          const code = (e.code);
+          if (code === 4040){
+            alert("방이 삭제되었습니다.")
+            window.location.href = '/chat/'
+          }
+          else {
+            console.error('Chat socket closed unexpectedly')
+          }
         };
+
+        chatSocket.onerror = (e) => {
+          alert(e)
+        }
 
         document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function(e) {
-            if (e.key === 'Enter') {  // enter, return
+        document.querySelector('#chat-message-input').onkeyup = (e) => {
+            if (e.key === 'Enter') {
                 document.querySelector('#chat-message-submit').click();
             }
         };
 
-        document.querySelector('#chat-message-submit').onclick = function(e) {
+        document.querySelector('#chat-message-submit').onclick = (e) => {
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
                 'message': message,
-                'user': user,
-                'room_id': roomId,
             }));
             messageInputDom.value = '';
         };
@@ -65,8 +90,9 @@
           const response = await API.get(`/chat/API/${room_id}`);
           return response.data;
         } catch (error) {
-          console.error("Error fetching room data:", error);
-          return null;
+          alert(error.response.data)
+          window.location.href = '/chat/'
+          //console.error("Error fetching room data:", error);
         }
       };
 
@@ -75,9 +101,17 @@
         roomId = roomData.room_id
         user = roomData.user
         messages = roomData.messages;
+        chatLog.value = ''
         for (message of messages){
-          chatLog.value += (message.user.username + ":" + message.message + "\n")
+          if (message.user){
+            chatLog.value += (message.user.username + ":" + message.message + "\n")
+          }
+          else {
+            chatLog.value += (message.message + "\n")
+          }
+          
         }
+        chatLog.scrollTop = chatLog.scrollHeight;
         connectWS();
       }
 
