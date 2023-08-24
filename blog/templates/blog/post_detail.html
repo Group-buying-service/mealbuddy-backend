@@ -8,7 +8,7 @@
     <p>{% trans '작성자:' %} {{ post_writer }}</p>
     <p>{% trans '작성시간:' %} {{ post_created_at }}</p>
     <p>{% trans '모집인원' %} {{ post_target_number }} {% trans ' / ' %} {{ post_join_number }}</p>
-    <p>{% trans '완료여부:' %}{% if post.is_compelete %} 모집완료 {% else %} 모집중 {% endif %}</p>
+    <p>{% trans '완료여부:' %}{% if post_is_compelete %} 모집완료 {% else %} 모집중 {% endif %}</p>
 
 
       <form action="{% url 'blog:participants' pk=post_id %}" method="post">

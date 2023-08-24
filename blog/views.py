@@ -17,7 +17,7 @@ from rest_framework.response import Response
 class Index(View):
     
     def get(self, request):
-        posts = Post.objects.all()
+        posts = Post.objects.all().order_by('created_at')
         page  = request.GET.get('page', '1')
         paginator = Paginator(posts, 5)  # 페이지당 10개씩 보여주기
         page_obj = paginator.get_page(page)
@@ -72,7 +72,7 @@ class Update(View):
     
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
-        form = PostForm(initial={'title': post.title, 'content': post.content})
+        form = PostForm(initial={'title': post.title,'category': post.category, 'content':post.content,'target_number':post.target_number})
         context = {
             'form': form,
             'post': post,
@@ -87,7 +87,9 @@ class Update(View):
         
         if form.is_valid():
             post.title = form.cleaned_data['title']
+            post.category = form.cleaned_data['category']
             post.content = form.cleaned_data['content']
+            post.target_number = form.cleaned_data['target_number']
             post.save()
             return redirect('blog:detail', pk=pk)
         
@@ -121,7 +123,8 @@ class DetailView(View):
             'post_content': post.content,
             'post_created_at': post.created_at,
             'post_target_number' : post.target_number,
-            'post_join_number': post.join_number
+            'post_join_number': post.join_number,
+            'post_is_compelete' : post.is_compelete
         }        
         return render(request, 'blog/post_detail.html', context)
 
@@ -133,20 +136,31 @@ class Participants(View):
         post = get_object_or_404(Post, pk=pk)
         if request.method == 'POST':
             if 'cancel' in request.POST:
+                # print(post.is_compelete)
                 if request.user in post.recruited_users.all(): # 모집한 사용자만 작용
                     post.join_number -= 1
                     post.recruited_users.remove(request.user)
                     post.save()
             elif 'join' in request.POST:
+                # print(post.is_compelete)
                 if request.user not in post.recruited_users.all(): # 이미 모집한 사용자라면 아무 동작도 하지 않음
                     if post.join_number < post.target_number:
                         post.join_number += 1
-                        post.recruited_users.add(request.user)                        
+                        post.recruited_users.add(request.user)
                         post.save()
-        if post.join_number == post.target_number:
-            post.is_compelete = True  # 참여가 다 찼음을 표시
-        else:
-            post.is_compelete = False
+                        
+            if post.join_number == post.target_number:
+                post.is_compelete = True
+                print(post.is_compelete)
+                post.save()
+            else:
+                post.is_compelete = False
+                post.save()
+
+
+
+            
+
 
 
             
