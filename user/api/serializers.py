@@ -33,17 +33,14 @@ class RegistrationSerializer(serializers.ModelSerializer):
 ### Login
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
-    # 1.
     username = serializers.CharField(max_length=255, read_only=True)
     password = serializers.CharField(max_length=128, write_only=True)
     last_login = serializers.CharField(max_length=255, read_only=True)
     
-    # 2.
     def validate(self, data):
         email = data.get('email', None)
         password = data.get('password', None)
         
-        # 3.
         if email is None:
             raise serializers.ValidationError(
                 'An email address is required to log in.'
@@ -54,10 +51,8 @@ class LoginSerializer(serializers.Serializer):
                 'A password is required to log in.'
             )
         
-        # 4.
         user = authenticate(username=email, password=password)
         
-        # 5.
         if user is None:
             raise serializers.ValidationError(
                 'A user with this email and password was not found'
@@ -68,11 +63,9 @@ class LoginSerializer(serializers.Serializer):
                 'This user has been deactivated.'
             )
         
-        # 6.
         user.last_login = timezone.now()
         user.save(update_fields=['last_login'])
         
-        # 7.
         return {
             'email': user.email,
             'username': user.username,
