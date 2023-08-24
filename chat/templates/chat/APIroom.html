@@ -10,12 +10,13 @@
     <input id="chat-message-input" type="text" size="100"><br>
     <input id="chat-message-submit" type="button" value="Send">
 
-    <form action="post">
+    <button id="chat-delete">채팅방 삭제</button>
 
     </form>
 
     <script>
       const chatLog = document.querySelector('#chat-log')
+      const chatDeleteButton = document.querySelector('#chat-delete')
       let roomId = '';
       let user = {};
       let messages = {};
@@ -51,7 +52,7 @@
         };
 
         chatSocket.onclose = (e) => {
-          console.log(e)
+          //console.log(e)
           const code = (e.code);
           if (code === 4040){
             alert("방이 삭제되었습니다.")
@@ -63,7 +64,7 @@
         };
 
         chatSocket.onerror = (e) => {
-          alert(e)
+          alert("연결에 실패했습니다/")
         }
 
         document.querySelector('#chat-message-input').focus();
@@ -116,6 +117,17 @@
       }
 
       loadRoomData()
+
+      const chatDelete = async () => {
+        try {
+          const response = await API.delete(`/chat/API/${roomId}`);
+        } catch (error) {
+          alert(error)
+          return error;
+        }
+      }
+      chatDeleteButton.addEventListener("click", chatDelete)
+
     </script>
 </body>
 </html>

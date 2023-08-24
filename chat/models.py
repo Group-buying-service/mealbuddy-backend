@@ -37,7 +37,7 @@ class ChatMessage(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     chatroom = models.ForeignKey(to="ChatRoom", on_delete=models.CASCADE, related_name="chat_room", db_column="chatroom_id")
-    user = models.ForeignKey(to=User,  null=True, blank=True,  on_delete=models.CASCADE, related_name="user", db_column="user_id")
+    user = models.ForeignKey(to=User, null=True, blank=True, on_delete=models.CASCADE, related_name="user", db_column="user_id")
 
     class Meta:
         db_table = "chatMessage"
