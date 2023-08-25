@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField  
 from django.contrib.auth import get_user_model
 
 # Create your models here.
@@ -12,6 +13,7 @@ class ChatRoom(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(to=User, on_delete=models.CASCADE, help_text="채팅방의 소유자")
     is_deleted = models.BooleanField(default=False)
+    blacklist = ArrayField(models.CharField(max_length=20), blank=True, null=True, default=list)
     # post = models.ForeignKey(to='Chat', on_delete=models.CASCADE)
 
     class Meta:
@@ -22,10 +24,11 @@ class ChatRoomJoin(models.Model):
     '''
     채팅방의 접근권한을 관리합니다.
     '''
-    chatroom = models.ForeignKey(to="ChatRoom", on_delete=models.CASCADE, related_name="room_join", db_column="chatroom_id")
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="user_join", db_column="user_id")
+    chatroom = models.ForeignKey(to="ChatRoom", on_delete=models.CASCADE, db_column="chatroom_id")
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, db_column="user_id")
     created_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)
+    
 
     class Meta:
         db_table = "chatRoomJoin"

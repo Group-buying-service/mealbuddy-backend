@@ -11,15 +11,18 @@
     <input id="chat-message-submit" type="button" value="Send">
 
     <button id="chat-delete">채팅방 삭제</button>
-
-    </form>
+    <ul id="user-list"></ul>
+    
 
     <script>
-      const chatLog = document.querySelector('#chat-log')
-      const chatDeleteButton = document.querySelector('#chat-delete')
-      let roomId = '';
+      const chatLog = document.querySelector('#chat-log');
+      const chatDeleteButton = document.querySelector('#chat-delete');
+      const userListWrapper = document.querySelector('#user-list');
+      const current_location = window.location.href;
+      const roomId = current_location[current_location.length-2];
       let user = {};
       let messages = {};
+      let test = ''
 
       const baseURL = 'http://127.0.0.1:8000'
       const csrftoken = document.cookie.match(/csrftoken=([^;]+)/)[1];
@@ -44,9 +47,15 @@
             }
             else if (data.type === 'chat.user.join') {
               chatLog.value += (data.message.message + '\n')
+              renderUserList()
             }
             else if (data.type === 'chat.user.leave') {
               chatLog.value += (data.message.message + '\n')
+              if (user.user_username === data.user) {
+                alert("강퇴당했습니다.")
+                window.location.href = '/chat/'
+              }
+              renderUserList()
             }
             chatLog.scrollTop = chatLog.scrollHeight;
         };
@@ -83,12 +92,10 @@
             messageInputDom.value = '';
         };
       }
-      
+
       const getRoomData = async () => {
-        const current_location = window.location.href;
-        const room_id = current_location[current_location.length-2];
         try {
-          const response = await API.get(`/chat/API/${room_id}`);
+          const response = await API.get(`/chat/API/${roomId}`);
           return response.data;
         } catch (error) {
           alert(error.response.data)
@@ -97,9 +104,40 @@
         }
       };
 
-      const loadRoomData = async () => {
+      const getUserList = async () => {
+        try {
+          const response = await API.get(`/chat/API/${roomId}/user`);
+          return response.data;
+        } catch (error) {
+          alert(error.response.data)
+          window.location.href = '/chat/'
+          //console.error("Error fetching room data:", error);
+        }
+      }
+
+      const renderUserList = async () => {
+        const userList = await getUserList();
+        userListWrapper.innerHTML = '';
+        for (const listed_user of userList){
+          userListChild = document.createElement("li")
+          userListChild.innerText = listed_user.user.username
+          userDeleteButton = document.createElement("button")
+          if (listed_user.user.username !== user.user_username){
+            userDeleteButton.innerText = "강퇴"
+            userDeleteButton.addEventListener("click", () => banUser(listed_user.user.username))
+          }
+          else {
+            userDeleteButton.innerText = "나가기"
+            userDeleteButton.addEventListener("click", exitRoom)
+          }
+            
+          userListChild.append(userDeleteButton);
+          userListWrapper.append(userListChild);
+        }
+      }
+
+      const renderRoomData = async () => {
         const roomData = await getRoomData();
-        roomId = roomData.room_id
         user = roomData.user
         messages = roomData.messages;
         chatLog.value = ''
@@ -113,10 +151,11 @@
           
         }
         chatLog.scrollTop = chatLog.scrollHeight;
+        renderUserList();
         connectWS();
       }
 
-      loadRoomData()
+      renderRoomData()
 
       const chatDelete = async () => {
         try {
@@ -127,6 +166,29 @@
         }
       }
       chatDeleteButton.addEventListener("click", chatDelete)
+
+      const banUser = async (target_username) => {
+        const data = {target_username:target_username}
+        try {
+          const response = await API.post(`/chat/API/${roomId}/user/`, data);
+          return response.data;
+        } catch (error) {
+          alert(error.response.data)
+          window.location.href = '/chat/'
+          //console.error("Error fetching room data:", error);
+        }
+      }
+
+      const exitRoom = async () => {
+        try {
+          const response = await API.delete(`/chat/API/${roomId}/user/`);
+          window.location.href = '/chat/'
+        } catch (error) {
+          alert(error.response.data)
+          //window.location.href = '/chat/'
+          //console.error("Error fetching room data:", error);
+        }
+      }
 
     </script>
 </body>

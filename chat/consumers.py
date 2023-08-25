@@ -72,7 +72,7 @@ class ChatConsumer(JsonWebsocketConsumer):
         user = event["user"]
         chatMessage_queryset = ChatMessage.objects.create(message=f"{user} 님이 퇴장했습니다.", chatroom_id = self.room_id)
         serialized_message = ChatMessageSerializer(instance=chatMessage_queryset)
-        self.send_json({"type": event_type, "message": serialized_message.data})
+        self.send_json({"type": event_type, "message": serialized_message.data, "user": user})
 
 
     def chat_room_deleted(self, event):

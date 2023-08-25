@@ -51,9 +51,9 @@
             withCredentials: true,
             credentials: 'include',
           }).then((res) => {
-            if (res.status < 300){
-              window.location.href = `/chat/${e.target.room_id.value}/`
-            }
+            window.location.href = `/chat/${e.target.room_id.value}/`
+          }).catch((error) => {
+            alert(error.response.data)
           })
         })
     </script>
