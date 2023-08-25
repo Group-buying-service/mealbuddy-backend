@@ -1,5 +1,4 @@
 from math import pi, log, cos, tan, sin, floor
-from rest_framework.views import APIView
 
 # Create your views here.
 
