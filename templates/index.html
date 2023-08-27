@@ -5,7 +5,7 @@
 <div class="main">
     <h1>{% trans "Welcome my blog" %}</h1>
     <br>
-    {% if user.is_authenticated %}
+    {% if user.is_superuser %}
     <a href="{% url 'blog:list' %}">{% trans '블로그로 바로가기' %}</a>
     
     {% else %}

@@ -19,11 +19,11 @@
 <body>
      <!-- header -->
 
-     {% if user.is_authenticated %}
+     {% if user.is_superuser %}
   <div class="header">    
         <h1><a href="{% url 'blog:list' %}">Blog</a></h1>
         <div class="header-click">
-            <p>{% trans '환영합니다 ' %} {{ user.email }} {% trans ' 님.' %}<a href="{% url 'user:logout' %}">로그아웃</a></p>
+            <p>{% trans '환영합니다 ' %} {{ request.user }} {% trans ' 님.' %}</p>
             
     </div>
 </div>
