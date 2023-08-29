@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('blog/', include('blog.urls')),
     path("chat/", include("chat.urls")),
+    path('user/', include('user.api.urls'), name='user'),
     path('', views.IndexMain.as_view()),
 ]
