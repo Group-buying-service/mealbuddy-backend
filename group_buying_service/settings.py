@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'user',
     'blog',
+    'foodchoicer',
 ]
 
 MIDDLEWARE = [
