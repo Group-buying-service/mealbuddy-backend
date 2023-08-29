@@ -34,18 +34,21 @@ class ChatRoomAPI(APIView):
             return True
         return False
 
-
     def get_room_join_permission(self, chat_room, user):
         if not user.username in chat_room.blacklist:
-            chat_room_join, created =  ChatRoomJoin.objects.get_or_create(chatroom=chat_room, user=user)
-            if not created:
-                chat_room_join.is_deleted = False
-                chat_room_join.save()
-            return chat_room_join
+            post = chat_room.post
+            if ChatRoomJoin.objects.filter(chatroom=chat_room, is_deleted=False).count() < post.target_number:
+                chat_room_join, created =  ChatRoomJoin.objects.get_or_create(chatroom=chat_room, user=user)
+                post.join_number = post.join_number + 1
+                #post.recruited_users.add(user)
+                post.save()
+                if not created:
+                    chat_room_join.is_deleted = False
+                    chat_room_join.save()
+                return chat_room_join
         return False
 
     def chat_room_render(self, chat_room, user):
-        # user_list = chat_room.room_join.all()
 
         messages = ChatMessage.objects.filter(chatroom = chat_room.pk)
         serialized_messages = ChatMessageSerializer(instance=messages, many=True)
@@ -58,7 +61,6 @@ class PostChatRoomAPI(ChatRoomAPI):
     # 채팅방 정보 반환
     def get(self, request, room_id):
         user = request.user
-        # user = User.objects.get(pk=1)
         try:
             chat_room = ChatRoom.objects.get(pk=room_id)
             if chat_room.is_deleted:
@@ -69,14 +71,19 @@ class PostChatRoomAPI(ChatRoomAPI):
             return Response("채팅방이 존재하지 않습니다.", status=status.HTTP_400_BAD_REQUEST)
         return self.chat_room_render(chat_room, user)
     
-    # 채팅방 접근 권한 부여 및 채팅방 생성
+    # 채팅방 접근 권한 부여
     def post(self, request, room_id):
         user = request.user
-        # user = User.objects.get(pk=1)
+        # if post_id:
+        #     try:
+        #         chat_room = ChatRoom.objects.create(post_id=post_id, owner=user)
+        #     except:
+        #         return Response("이미 존재하는 채팅방입니다", status=status.HTTP_400_BAD_REQUEST)
+        # else:
         try:
             chat_room = ChatRoom.objects.get(pk=room_id)
         except ObjectDoesNotExist:
-            chat_room = ChatRoom.objects.create(owner=user)
+            return Response("채팅방이 존재하지 않습니다.", status=status.HTTP_400_BAD_REQUEST)
         if self.get_room_join_permission(chat_room, user):
             return self.chat_room_render(chat_room, user)
         return Response("인원수가 가득 찼거나 밴 당한 상태입니다", status=status.HTTP_400_BAD_REQUEST)
@@ -128,6 +135,10 @@ class PostChatRoomUserAPI(APIView):
         chat_room.save()
         chat_room_join.is_deleted = True
         chat_room_join.save()
+        post = chat_room.post
+        post.join_number = post.join_number - 1
+        #post.recruited_users.remove(user)
+        post.save()
         return Response("해당 유저를 강퇴하였습니다.", status=status.HTTP_202_ACCEPTED)
 
 
@@ -138,7 +149,15 @@ class PostChatRoomUserAPI(APIView):
             chat_room_join = ChatRoomJoin.objects.get(user=user, chatroom_id=room_id)
         except ObjectDoesNotExist:
             return Response("올바르지 않은 요청입니다.", status=status.HTTP_400_BAD_REQUEST)
+        try:
+            chat_room = ChatRoom.objects.get(pk=room_id)
+        except ObjectDoesNotExist:
+            return Response("채팅방이 존재하지 않습니다.", status=status.HTTP_400_BAD_REQUEST)
         chat_room_join.is_deleted = True
         chat_room_join.save()
+        post = chat_room.post
+        post.join_number = post.join_number - 1
+        #post.recruited_users.remove(user)
+        post.save()
         return Response("채팅방에서 퇴장하였습니다.", status=status.HTTP_202_ACCEPTED)
 
