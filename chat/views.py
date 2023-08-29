@@ -121,8 +121,7 @@ class PostChatRoomUserAPI(APIView):
             return Response("권한이 없습니다.", status=status.HTTP_400_BAD_REQUEST)
         try:
             chat_room_join = ChatRoomJoin.objects.get(user__username=target_username, chatroom_id=room_id)
-        except ObjectDoesNotExist as e:
-            print(e)
+        except ObjectDoesNotExist:
             return Response("올바르지 않은 요청입니다.", status=status.HTTP_400_BAD_REQUEST)
 
         chat_room.blacklist.append(target_username)
