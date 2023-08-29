@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+
+{% if form.errors %}
+    {% include 'blog/form_error.html' %}
+{% else %}
+    {% trans 'Welcome!' %}
+    <form action="{% url 'blog:edit' pk=post.pk %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="{% trans '수정' %}" class="btn">
+    </form>
+{% endif %}
+
+{% endblock %}

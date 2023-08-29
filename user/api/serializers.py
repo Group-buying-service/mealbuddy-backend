@@ -71,4 +71,41 @@ class LoginSerializer(serializers.Serializer):
             'username': user.username,
             'last_login': user.last_login
         }
+<<<<<<< HEAD
 
+=======
+    
+
+### UserDetail
+class UserSerializer(serializers.ModelSerializer):
+    
+    password = serializers.CharField(
+        max_length=128,
+        min_length=8,
+        write_only=True
+    )
+    
+    class Meta:
+        model = User
+        fields = [
+            'email',
+            'username',
+            'password',
+            'token'
+        ]
+        
+        read_only_fields = ('token', )
+        
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        
+        for (key, value) in validated_data.items():
+            setattr(instance, key, value)
+
+        if password is not None:
+            instance.set_password(password)
+
+        instance.save()
+
+        return instance
+>>>>>>> 6c68b1d48d2feaaec344f03a641a5c3a342b678e
