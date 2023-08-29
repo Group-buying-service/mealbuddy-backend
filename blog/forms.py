@@ -1,5 +1,6 @@
 # blog/forms.py
 from django import forms
+from rest_framework import serializers, viewsets
 from .models import Post, Comment, HashTag
 
 # Form: html에 있는 form 태그

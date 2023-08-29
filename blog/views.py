@@ -8,13 +8,13 @@ from .forms import PostForm, CommentForm, HashTagForm
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.shortcuts import get_object_or_404
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from .serializers import PostSerializer
 ### Post
-class Index(View):
+class Index(APIView):
     
     def get(self, request):
         posts = Post.objects.all().order_by('created_at')
@@ -27,23 +27,16 @@ class Index(View):
         else:
             posts = Post.objects.all()
         
-        context = {
-            "title": "Blog",
-            'categories': selected_category,
-            'posts': page_obj
-            
-        }
-
-
-        return render(request, 'blog/post_list.html', context)
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
     
 
 
 
 
 
-class Write(LoginRequiredMixin, View):
-    
+class Write(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     def get(self, request):
         form = PostForm()
         context = {
@@ -59,46 +52,29 @@ class Write(LoginRequiredMixin, View):
             post = form.save(commit=False)
             post.writer = request.user
             post.save()
-            return redirect('blog:list')
+            serializer = PostSerializer(post)
+            return Response(serializer.data)
         
-        context = {
-            'form': form
-        }
-        
-        return render(request, 'blog/post_form.html', context)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class Update(View):
     
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
-        form = PostForm(initial={'title': post.title,'category': post.category, 'content':post.content,'target_number':post.target_number})
-        context = {
-            'form': form,
-            'post': post,
-            "title": "Blog"
-        }
-        return render(request, 'blog/post_edit.html', context)
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
     
     
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
-        form = PostForm(request.POST)
+        serializer = PostSerializer(post, data=request.data)
         
-        if form.is_valid():
-            post.title = form.cleaned_data['title']
-            post.category = form.cleaned_data['category']
-            post.content = form.cleaned_data['content']
-            post.target_number = form.cleaned_data['target_number']
-            post.save()
-            return redirect('blog:detail', pk=pk)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
         
-        context = {
-            'form': form,
-            "title": "Blog"
-        }
-        
-        return render(request, 'blog/post_edit.html', context)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 
 class Delete(View):
@@ -106,62 +82,57 @@ class Delete(View):
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         post.delete()
-        return redirect('blog:list')
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class DetailView(View):
     
     def get(self, request, pk):
-        post = Post.objects.prefetch_related('comment_set', 'hashtag_set').get(pk=pk)
-        
-        context = {
-            "title": "Blog",
-            'post_id': pk,
-            'post_title': post.title,
-            'post_writer': post.writer,
-            'post_category':post.category,
-            'post_content': post.content,
-            'post_created_at': post.created_at,
-            'post_target_number' : post.target_number,
-            'post_join_number': post.join_number,
-            'post_is_compelete' : post.is_compelete
-        }        
-        return render(request, 'blog/post_detail.html', context)
+        post = post = get_object_or_404(Post, pk=pk)
+        serializer = PostSerializer(post)      
+        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
 
 # 참여버튼
 class Participants(View):
+    permission_classes = [permissions.IsAuthenticated]
     
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
-        if request.method == 'POST':
-            if 'cancel' in request.POST:
-                if request.user in post.recruited_users.all(): # 모집한 사용자만 작용
-                    post.join_number -= 1
-                    post.recruited_users.remove(request.user)
+        action = request.data.get('action') # 'join' or 'cancel'
+        if action == 'join':
+            if post.join_number < post.target_number and request.user not in post.recruited_users.all():
+                post.join_number += 1
+                post.recruited_users.add(request.user)
+                post.save()
+                
+                if post.join_number == post.target_number:
                     post.save()
-            elif 'join' in request.POST:
-                if request.user not in post.recruited_users.all(): # 이미 모집한 사용자라면 아무 동작도 하지 않음
-                    if post.join_number < post.target_number:
-                        post.join_number += 1
-                        post.recruited_users.add(request.user)
-                        post.save()
-                        
-            if post.join_number == post.target_number:
-                post.is_compelete = True
-                post.save()
+                
+                serializer = PostSerializer(post)
+                return Response(serializer.data)
             else:
-                post.is_compelete = False
+                return Response({'error': 'Cannot join.'}, status=status.HTTP_400_BAD_REQUEST)
+        elif action == 'cancel':
+            if request.user in post.recruited_users.all():
+                post.join_number -= 1
+                post.recruited_users.remove(request.user)
                 post.save()
+                
+                serializer = PostSerializer(post)
+                return Response(serializer.data)
+            else:
+                return Response({'error': 'Cannot cancel join.'}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-            
-
-
-
-            
-        return redirect('blog:detail', pk=pk)
+        
+                        
+        if post.join_number == post.target_number:
+            post.is_compelete = True
+            post.save()
+        else:
+            post.is_compelete = False
+            post.save()
+        return Response({'error': 'Invalid action.'}, status=status.HTTP_400_BAD_REQUEST)
     
 # # 참여버튼
 # class Participants(View):
