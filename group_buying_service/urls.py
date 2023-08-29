@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+
 from . import views
 
 urlpatterns = [
@@ -23,5 +24,6 @@ urlpatterns = [
     path('blog/', include('blog.urls')),
     path("chat/", include("chat.urls")),
     path('user/', include('user.api.urls'), name='user'),
+    path("foodchoicer/", include("foodchoicer.urls")),
     path('', views.IndexMain.as_view()),
 ]
