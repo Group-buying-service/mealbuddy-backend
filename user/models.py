@@ -22,8 +22,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
     
     USERNAME_FIELD = 'email'
     
-    REQUIRED_FIELDS = [
-    ]
+    REQUIRED_FIELDS = ['username']
     
     objects = UserManager()
     
