@@ -1,5 +1,5 @@
 """
-URL configuration for group_buying_service project.
+URL configuration for app project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.2/topics/http/urls/
@@ -16,8 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('blog/', include('blog.urls')),
+    path("chat/", include("chat.urls")),
     path('user/', include('user.api.urls'), name='user'),
+    path('', views.IndexMain.as_view()),
 ]
