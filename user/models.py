@@ -14,7 +14,7 @@ from core.models import TimestampedModel
 
 class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
     
-    username = models.CharField(max_length=255, unique=True)
+    username = models.CharField(max_length=255)
     email = models.EmailField(db_index=True, unique=True)
     password = models.CharField(max_length=255)
     is_active = BooleanField(default=True)
