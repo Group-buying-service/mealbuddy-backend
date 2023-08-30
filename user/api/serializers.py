@@ -36,6 +36,7 @@ class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=255, read_only=True)
     password = serializers.CharField(max_length=128, write_only=True)
     last_login = serializers.CharField(max_length=255, read_only=True)
+    token = serializers.CharField(max_length=255, read_only=True)
     
     def validate(self, data):
         email = data.get('email', None)
@@ -69,7 +70,8 @@ class LoginSerializer(serializers.Serializer):
         return {
             'email': user.email,
             'username': user.username,
-            'last_login': user.last_login
+            'last_login': user.last_login,
+            'token': user.token
         }
     
 

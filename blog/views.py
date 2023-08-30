@@ -36,37 +36,27 @@ class Index(APIView):
 
 
 class Write(APIView):
-    permission_classes = [permissions.IsAuthenticated]
     def get(self, request):
-        form = PostForm()
-        context = {
-            'form': form,
-            "title": "Blog"
-        }
-        return render(request, 'blog/post_form.html', context)
+        serializer = PostSerializer()  # Serializer 인스턴스 생성
+        return Response(serializer.data)
     
     def post(self, request):
-        form = PostForm(request.POST)
+        serializer = PostSerializer(data=request.data)  # 요청 데이터로 Serializer 인스턴스 생성
         
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.writer = request.user
-            post.save()
-            serializer = PostSerializer(post)
-            return Response(serializer.data)
-        
+        if serializer.is_valid():
+            serializer.save(writer=request.user)  # 현재 사용자 설정
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(request.user.id)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class Update(View):
-    
+class Update(APIView):
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         serializer = PostSerializer(post)
         return Response(serializer.data)
-    
-    
-    def post(self, request, pk):
+
+    def put(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         serializer = PostSerializer(post, data=request.data)
         
@@ -75,6 +65,7 @@ class Update(View):
             return Response(serializer.data)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
         
 
 class Delete(View):
@@ -85,12 +76,11 @@ class Delete(View):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class DetailView(View):
-    
+class DetailView(APIView):
     def get(self, request, pk):
-        post = post = get_object_or_404(Post, pk=pk)
-        serializer = PostSerializer(post)      
-        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+        post = get_object_or_404(Post, pk=pk)
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
 
 
 # 참여버튼
