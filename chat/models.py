@@ -9,8 +9,8 @@ User = get_user_model()
 
 class ChatRoom(models.Model):
 
-    created_at = models.DateTimeField(auto_now=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+    # created_at = models.DateTimeField(auto_now=True)
+    # updated_at = models.DateTimeField(auto_now_add=True)
     # owner = models.ForeignKey(to=User, on_delete=models.CASCADE, help_text="채팅방의 소유자")
     is_deleted = models.BooleanField(default=False)
     blacklist = ArrayField(models.CharField(max_length=20), blank=True, null=True, default=list)
@@ -27,6 +27,7 @@ class ChatRoomJoin(models.Model):
     chatroom = models.ForeignKey(to="ChatRoom", on_delete=models.CASCADE, db_column="chatroom_id")
     user = models.ForeignKey(to=User, on_delete=models.CASCADE, db_column="user_id")
     created_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
     
 
@@ -38,7 +39,6 @@ class ChatMessage(models.Model):
 
     message = models.CharField(max_length=300)
     created_at = models.DateTimeField(auto_now=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
     chatroom = models.ForeignKey(to="ChatRoom", on_delete=models.CASCADE, related_name="chat_room", db_column="chatroom_id")
     user = models.ForeignKey(to=User, null=True, blank=True, on_delete=models.CASCADE, related_name="user", db_column="user_id")
 
