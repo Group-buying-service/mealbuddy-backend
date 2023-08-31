@@ -63,7 +63,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'user',
     'blog',
-    'foodchoicer',
+    'openAPI',
 ]
 
 MIDDLEWARE = [
