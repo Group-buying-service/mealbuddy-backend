@@ -34,18 +34,20 @@
       API.defaults.headers.common['Authorization'] = `token ${accessToken}`
 
       const connectWS = async () => {
+        const token = localStorage.getItem('token');
         const chatSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/chat/'
-            + roomId
-            + '/'
-        );
+          'ws://'
+          + '127.0.0.1:8000'
+          + '/ws/chat/'
+          + roomId
+          + '/'
+          + `?token=${token}`
+          );
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
             if (data.type === "chat.message") {
-              chatLog.value += (data.user.username + ":" + data.message + '\n');
+              chatLog.value += (data.message.user.username + ":" + data.message.message + '\n');
             }
             else if (data.type === 'chat.user.join') {
               chatLog.value += (data.message.message + '\n')
@@ -75,7 +77,7 @@
         };
 
         chatSocket.onerror = (e) => {
-          alert("연결에 실패했습니다/")
+          alert("연결에 실패했습니다.")
         }
 
         document.querySelector('#chat-message-input').focus();

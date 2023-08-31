@@ -42,10 +42,10 @@ class Write(APIView):
     
     def post(self, request):
         serializer = PostSerializer(data=request.data)  # 요청 데이터로 Serializer 인스턴스 생성
-        
         if serializer.is_valid():
             serializer.save(writer=request.user)  # 현재 사용자 설정
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(serializer.errors)
         print(request.user.id)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

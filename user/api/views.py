@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
-from .serializers import RegistrationSerializer, LoginSerializer, UserUpdateSerializer, ChangePasswordSerializer, User, DeleteUserSerializer, UserSerializer
+from .serializers import RegistrationSerializer, LoginSerializer, ChangePasswordSerializer, User, DeleteUserSerializer, UserSerializer
 from .renderers import UserJSONRenderer
 from user.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication

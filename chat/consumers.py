@@ -1,7 +1,9 @@
 import json
+import jwt
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer, JsonWebsocketConsumer
+from channels.db import database_sync_to_async
 
 from .models import ChatRoom, ChatRoomJoin, ChatMessage
 from .serializer import ChatMessageSerializer
@@ -52,12 +54,11 @@ class ChatConsumer(JsonWebsocketConsumer):
     # 메세지가 업데이트되면 룸 멤버에게 메세지 전송
     def chat_message(self, event):
         event_type = event["type"]
-        message = event["message"]["message"]
+        message = event["message"]  
         user = event["message"]["user"]
 
         # Send message to WebSocket
         self.send_json({"type": event_type, "message": message, "user": user})
-
 
     def chat_user_join(self, event):
         event_type = event["type"]
@@ -65,7 +66,6 @@ class ChatConsumer(JsonWebsocketConsumer):
         chatMessage_queryset = ChatMessage.objects.create(message=f"{user} 님이 입장했습니다.", chatroom_id = self.room_id)
         serialized_message = ChatMessageSerializer(instance=chatMessage_queryset)
         self.send_json({"type": event_type, "message": serialized_message.data})
-
 
     def chat_user_leave(self, event):
         event_type = event["type"]

@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import ChatMessage, ChatRoom, ChatRoomJoin
-from .serializer import ChatMessageSerializer, UserListSerializer
+from .serializer import ChatMessageSerializer, UserListSerializer, UserSerializer, ChatRoomPostSerializer
 
 User = get_user_model()
 
@@ -49,11 +49,12 @@ class ChatRoomAPI(APIView):
         return False
 
     def chat_room_render(self, chat_room, user):
-
         messages = ChatMessage.objects.filter(chatroom = chat_room.pk)
         serialized_messages = ChatMessageSerializer(instance=messages, many=True)
-        serialized_user = {"user_id": user.id, "user_username": user.username}
-        return Response({"room_id": chat_room.pk, "messages":serialized_messages.data, "user": serialized_user}, status=status.HTTP_200_OK)
+        post = chat_room.post
+        serialized_post = ChatRoomPostSerializer(instance=post)
+        serialized_user = UserSerializer(instance=user)
+        return Response({"messages":serialized_messages.data, "user": serialized_user.data, **serialized_post.data}, status=status.HTTP_200_OK)
 
 
 class PostChatRoomAPI(ChatRoomAPI):
@@ -95,7 +96,7 @@ class PostChatRoomAPI(ChatRoomAPI):
             chat_room = ChatRoom.objects.get(pk=room_id)
         except ObjectDoesNotExist:
             return Response("채팅방이 존재하지 않습니다.", status=status.HTTP_400_BAD_REQUEST)
-        if user == chat_room.owner:
+        if user == chat_room.post.writer:
             chat_room.is_deleted = True
             chat_room.save()
             return Response("채팅방이 삭제되었습니다.", status=status.HTTP_202_ACCEPTED)
@@ -124,7 +125,7 @@ class PostChatRoomUserAPI(APIView):
             chat_room = ChatRoom.objects.get(pk=room_id)
         except ObjectDoesNotExist:
             return Response("채팅방이 존재하지 않습니다.", status=status.HTTP_400_BAD_REQUEST)
-        if user!=chat_room.owner:
+        if user!=chat_room.post.writer:
             return Response("권한이 없습니다.", status=status.HTTP_400_BAD_REQUEST)
         try:
             chat_room_join = ChatRoomJoin.objects.get(user__username=target_username, chatroom_id=room_id)
