@@ -9,9 +9,6 @@ User = get_user_model()
 
 class ChatRoom(models.Model):
 
-    # created_at = models.DateTimeField(auto_now=True)
-    # updated_at = models.DateTimeField(auto_now_add=True)
-    # owner = models.ForeignKey(to=User, on_delete=models.CASCADE, help_text="채팅방의 소유자")
     is_deleted = models.BooleanField(default=False)
     blacklist = ArrayField(models.CharField(max_length=20), blank=True, null=True, default=list)
     post = models.OneToOneField(to='blog.Post', on_delete=models.CASCADE, db_column="post_id")
