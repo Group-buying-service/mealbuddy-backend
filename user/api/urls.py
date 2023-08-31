@@ -11,4 +11,3 @@ urlpatterns = [
     path('delete/', DeleteUserView.as_view(), name='delete'),
     path('changepassword/', ChangePasswordView .as_view(), name='changepassword'),
 ]
-
