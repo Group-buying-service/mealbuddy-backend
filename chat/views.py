@@ -8,6 +8,7 @@ from rest_framework.decorators import APIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 from .models import ChatMessage, ChatRoom, ChatRoomJoin
 from .serializer import ChatMessageSerializer, UserListSerializer, UserSerializer, ChatRoomPostSerializer
@@ -27,6 +28,8 @@ def chatRoom(request, room_id):
 
 
 class ChatRoomAPI(APIView):
+
+    permission_classes = [IsAuthenticated]
 
     def room_join_permission(self, chat_room, user):
         chat_room_join = ChatRoomJoin.objects.filter(user=user, chatroom=chat_room, is_deleted=False)
@@ -59,6 +62,8 @@ class ChatRoomAPI(APIView):
 
 class PostChatRoomAPI(ChatRoomAPI):
 
+    permission_classes = [IsAuthenticated]
+
     # 채팅방 정보 반환
     def get(self, request, room_id):
         user = request.user
@@ -75,12 +80,6 @@ class PostChatRoomAPI(ChatRoomAPI):
     # 채팅방 접근 권한 부여
     def post(self, request, room_id):
         user = request.user
-        # if post_id:
-        #     try:
-        #         chat_room = ChatRoom.objects.create(post_id=post_id, owner=user)
-        #     except:
-        #         return Response("이미 존재하는 채팅방입니다", status=status.HTTP_400_BAD_REQUEST)
-        # else:
         try:
             chat_room = ChatRoom.objects.get(pk=room_id)
         except ObjectDoesNotExist:
@@ -104,6 +103,8 @@ class PostChatRoomAPI(ChatRoomAPI):
 
 
 class PostChatRoomUserAPI(APIView):
+
+    permission_classes = [IsAuthenticated]
 
     # 유저리스트 정보 받기
     def get(self, request, room_id):

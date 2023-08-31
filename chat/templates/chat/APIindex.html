@@ -28,6 +28,8 @@
         const API = axios.create({
           baseURL: baseURL,
         })
+        const accessToken = localStorage.getItem('token')
+        API.defaults.headers.common['Authorization'] = `token ${accessToken}`
         API.defaults.headers.common['X-CSRFToken'] = csrftoken;
 
         document.querySelector('#room-name-input').focus();
