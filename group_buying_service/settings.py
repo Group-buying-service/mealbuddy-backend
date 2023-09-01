@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     'user',
     'blog',
     'rest_framework_simplejwt',
+    'foodchoicer',
 ]
 
 MIDDLEWARE = [
