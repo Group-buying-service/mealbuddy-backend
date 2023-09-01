@@ -61,6 +61,7 @@ def get_weather_data(items):
                 pass
     return weather_data
 
+
 def request_weather_data(lat, lon, basedate = None, time = None, pageNo=1, numOfRows = 12):
 
     if not basedate and not time:
