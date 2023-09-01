@@ -19,6 +19,9 @@ class Post(models.Model):
     join_number = models.PositiveIntegerField(default=1)
     recruited_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='recruited_posts', blank=True)
 
+    class Meta:
+        ordering = ['-id']
+
 
 
 class Comment(models.Model):

@@ -29,14 +29,6 @@ class ChatConsumer(JsonWebsocketConsumer):
     # WS 에서 메세지 받아옴.
     def receive_json(self, json_data):
         message = json_data["message"]
-        room_id = json_data['room_id']
-
-        # if str(room_id) != self.room_id:
-        #     self.send_json({
-        #         "type": 'chat.error.permission',
-        #         "message": '권한이 없는 요청입니다.'
-        #     })
-        #     self.close()
         
         chatMessage_queryset = ChatMessage.objects.create(message=message, user=self.user, chatroom_id = self.room_id)
         serialized_message = ChatMessageSerializer(instance=chatMessage_queryset)

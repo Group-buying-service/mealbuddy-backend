@@ -154,22 +154,11 @@ class ChangePasswordView(APIView):
 
 
 # UserDetail
-class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
+class UserCheckAPIView(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = (UserJSONRenderer,)
     serializer_class = UserSerializer
 
     def get(self, request, *args, **kwargs):
         serializer = self.serializer_class(request.user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def patch(self, request, *args, **kwargs):
-        serializer_data = request.data
-        serializer = self.serializer_class(
-            request.user, data=serializer_data, partial=True
-        )
-
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
         return Response(serializer.data, status=status.HTTP_200_OK)

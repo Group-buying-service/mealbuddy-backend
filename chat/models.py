@@ -30,6 +30,7 @@ class ChatRoomJoin(models.Model):
 
     class Meta:
         db_table = "chatRoomJoin"
+        ordering = ['updated_at']
 
 
 class ChatMessage(models.Model):

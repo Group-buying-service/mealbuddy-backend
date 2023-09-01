@@ -18,6 +18,12 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = '__all__'
 
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        chatroom_id = instance.chatroom.id
+        rep['chat_id'] = chatroom_id
+        return rep
+
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment

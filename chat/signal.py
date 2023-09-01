@@ -18,7 +18,7 @@ def chatroomjoin_created(sender, instance, created, **kwargs):
             chat_group_name,
             {
                 "type": "chat.user.join",
-                "user": instance.user.username,
+                "user_id": instance.user.id,
                 "message": serialized_message.data,
             }
         )
@@ -34,7 +34,7 @@ def chatroomjoin_deleted(sender, instance, created, **kwargs):
             chat_group_name,
             {
                 "type": "chat.user.leave",
-                "user": instance.user.username,
+                "user_id": instance.user.id,
                 "message": serialized_message.data,
             }
         )
