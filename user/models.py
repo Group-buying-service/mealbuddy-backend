@@ -36,6 +36,14 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
     def get_short_name(self):
         return self.username
     
+# 유저 프로필
+class Profile(models.Model):
+    email = models.EmailField(unique=True)
+    username = models.CharField(max_length=50)
+    address = models.CharField(max_length=50)
+
+    def str(self):
+        return self.username
 
     # token 생성 함수
     @property
@@ -51,3 +59,4 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
         }, settings.SECRET_KEY, algorithm='HS256')
 
         return token
+

@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
+from user.models import Profile
 
 # Create your models here.
 class Post(models.Model):
@@ -10,6 +11,7 @@ class Post(models.Model):
     category = models.CharField(max_length=30, choices=category_choices, default='치킨',verbose_name='카테고리종류')
     content = models.TextField()
     writer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    address = models.OneToOneField(Profile, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add = True)
     # 완료여부
     is_compelete = models.BooleanField(default=False)
@@ -18,22 +20,3 @@ class Post(models.Model):
     # 참여인원
     join_number = models.PositiveIntegerField(default=0)
     recruited_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='recruited_posts', blank=True)
-
-
-
-class Comment(models.Model):
-    post = models.ForeignKey('Post',on_delete=models.CASCADE)
-    content = models.TextField()
-    writer = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    def __str__(self):
-        return self.content
-    
-
-class HashTag(models.Model):
-    post = models.ForeignKey('Post',on_delete=models.CASCADE)    
-    writer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    name = models.CharField(max_length=10)
-
-    def __str__(self):
-        return self.name
