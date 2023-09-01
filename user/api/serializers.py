@@ -94,8 +94,8 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             'email',
             'username',
             'password',
-            'address'
-            'token'
+            'address',
+            'token',
             'id',
         ]
 

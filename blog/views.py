@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from  django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from .models import Post, Comment, HashTag
+from chat.models import ChatRoomJoin
 from .forms import PostForm, CommentForm, HashTagForm
 from django.db.models import Q
 from django.http import HttpResponseRedirect
@@ -80,7 +81,9 @@ class DetailView(APIView):
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         serializer = PostSerializer(post)
-        return Response(serializer.data)
+        chatroom = post.chatroom
+        is_joined = ChatRoomJoin.objects.filter(chatroom=chatroom, user=request.user, is_deleted=False).exists()
+        return Response({**serializer.data, 'is_joined':is_joined})
 
 
 # 참여버튼

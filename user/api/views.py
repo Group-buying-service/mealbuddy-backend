@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 
 from rest_framework.authtoken.models import Token
-from .serializers import RegistrationSerializer, LoginSerializer, ChangePasswordSerializer, User, DeleteUserSerializer, UserSerializer
+from .serializers import RegistrationSerializer, LoginSerializer, ChangePasswordSerializer, User, DeleteUserSerializer, UserUpdateSerializer
 from .renderers import UserJSONRenderer
 from user.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
@@ -63,7 +63,7 @@ class LogoutView(APIView):
 
         return Response(status=status.HTTP_200_OK)
 
-      
+
 # 비밀번호 변경
 class ChangePasswordView(APIView):
     authentication_classes = [TokenAuthentication]
@@ -86,7 +86,7 @@ class ChangePasswordView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-      
+
 # 프로필 업데이트
 class ProfileUpdateView(APIView):
     authentication_classes = [TokenAuthentication]
@@ -108,7 +108,7 @@ class ProfileUpdateView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-      
+
 # 유저 삭제
 class DeleteUserView(APIView):
     permission_classes = [IsAuthenticated]

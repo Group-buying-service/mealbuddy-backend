@@ -105,10 +105,18 @@ class PostChatRoomUserAPI(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    # 유저 참여 여부 확인.
+    # 유저 리스트 반환
     def get(self, request, room_id):
-        is_joined = ChatRoomJoin.objects.filter(chatroom_id = room_id, user = request.user, is_deleted=False).exists()
-        return Response({'is_joined': is_joined}, status=status.HTTP_200_OK)
+        try:
+            userlist_qs = ChatRoomJoin.objects.filter(chatroom_id=room_id, is_deleted=False)
+        except ObjectDoesNotExist:
+            return Response("채팅방이 존재하지 않습니다.", status=status.HTTP_400_BAD_REQUEST)
+        
+        userlist_serailzer = UserListSerializer(userlist_qs, many=True)
+
+        return Response(userlist_serailzer.data, status=status.HTTP_200_OK)
+        # is_joined = ChatRoomJoin.objects.filter(chatroom_id = room_id, user = request.user, is_deleted=False).exists()
+        # return Response({'is_joined': is_joined}, status=status.HTTP_200_OK)
 
 
     # 방 나가기

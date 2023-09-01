@@ -21,9 +21,9 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'core.exceptions.core_exception_handler',
     'NON_FIELD_ERRORS_KEY': 'error',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'user.backends.JWTAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'user.backends.JWTAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
         ),
 }
 
@@ -72,7 +72,6 @@ INSTALLED_APPS = [
     'user',
     'blog',
     'openAPI',
-    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [

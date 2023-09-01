@@ -10,8 +10,6 @@ from .managers import UserManager
 from core.models import TimestampedModel
 
 
-
-
 class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
     
     username = models.CharField(max_length=255)
@@ -43,7 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
         return self._generate_jwt_token( )
 
     def _generate_jwt_token(self):
-        dt = datetime.now( ) + timedelta(days=1) # days=60 / 토큰 만료 기간이 60일
+        dt = datetime.now( ) + timedelta(days=1) # days=1 / 토큰 만료 기간이 1일
 
         token = jwt.encode({
             'id': self.pk,
@@ -52,10 +50,12 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
 
         return token
 
+
 class Profile(models.Model):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=50)
     address = models.CharField(max_length=200, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.username
