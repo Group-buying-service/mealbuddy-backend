@@ -1,9 +1,5 @@
-import json
-import jwt
-
 from asgiref.sync import async_to_sync
-from channels.generic.websocket import WebsocketConsumer, JsonWebsocketConsumer
-from channels.db import database_sync_to_async
+from channels.generic.websocket import JsonWebsocketConsumer
 
 from .models import ChatRoom, ChatRoomJoin, ChatMessage
 from .serializer import ChatMessageSerializer
@@ -33,8 +29,7 @@ class ChatConsumer(JsonWebsocketConsumer):
     # WS 에서 메세지 받아옴.
     def receive_json(self, json_data):
         message = json_data["message"]
-        # user_data = json_data['user']
-        # room_id = json_data['room_id']
+        room_id = json_data['room_id']
 
         # if str(room_id) != self.room_id:
         #     self.send_json({
@@ -53,26 +48,13 @@ class ChatConsumer(JsonWebsocketConsumer):
 
     # 메세지가 업데이트되면 룸 멤버에게 메세지 전송
     def chat_message(self, event):
-        event_type = event["type"]
-        message = event["message"]  
-        user = event["message"]["user"]
-
-        # Send message to WebSocket
-        self.send_json({"type": event_type, "message": message, "user": user})
+        self.send_json({**event})
 
     def chat_user_join(self, event):
-        event_type = event["type"]
-        user = event["user"]
-        chatMessage_queryset = ChatMessage.objects.create(message=f"{user} 님이 입장했습니다.", chatroom_id = self.room_id)
-        serialized_message = ChatMessageSerializer(instance=chatMessage_queryset)
-        self.send_json({"type": event_type, "message": serialized_message.data})
+        self.send_json({**event})
 
     def chat_user_leave(self, event):
-        event_type = event["type"]
-        user = event["user"]
-        chatMessage_queryset = ChatMessage.objects.create(message=f"{user} 님이 퇴장했습니다.", chatroom_id = self.room_id)
-        serialized_message = ChatMessageSerializer(instance=chatMessage_queryset)
-        self.send_json({"type": event_type, "message": serialized_message.data, "user": user})
+        self.send_json({**event})
 
 
     def chat_room_deleted(self, event):

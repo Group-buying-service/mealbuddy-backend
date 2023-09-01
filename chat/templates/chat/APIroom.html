@@ -54,7 +54,7 @@
             }
             else if (data.type === 'chat.user.leave') {
               chatLog.value += (data.message.message + '\n')
-              if (user.user_username === data.user) {
+              if (user.username === data.user) {
                 alert("강퇴당했습니다.")
                 window.location.href = '/chat/'
               }
@@ -125,9 +125,10 @@
           userListChild = document.createElement("li")
           userListChild.innerText = listed_user.user.username
           userDeleteButton = document.createElement("button")
-          if (listed_user.user.username !== user.user_username){
+          console.log(user)
+          if (listed_user.user.username !== user.username){
             userDeleteButton.innerText = "강퇴"
-            userDeleteButton.addEventListener("click", () => banUser(listed_user.user.username))
+            userDeleteButton.addEventListener("click", () => banUser(listed_user.user.id))
           }
           else {
             userDeleteButton.innerText = "나가기"
@@ -170,13 +171,15 @@
       }
       chatDeleteButton.addEventListener("click", chatDelete)
 
-      const banUser = async (target_username) => {
-        const data = {target_username:target_username}
+      const banUser = async (target_user_id) => {
+        const data = {target_user_id:target_user_id}
         try {
-          const response = await API.post(`/chat/API/${roomId}/user/`, data);
+          const response = await API.post(`/chat/API/${roomId}/user/ban/`, data);
+          console.log(response.data)
           return response.data;
         } catch (error) {
-          alert(error.response.data)
+          console.log(error.response.data)
+          alert(error)
           window.location.href = '/chat/'
           //console.error("Error fetching room data:", error);
         }
@@ -187,7 +190,8 @@
           const response = await API.delete(`/chat/API/${roomId}/user/`);
           window.location.href = '/chat/'
         } catch (error) {
-          alert(error.response.data)
+          console.log(error.response.data)
+          alert(error)
           //window.location.href = '/chat/'
           //console.error("Error fetching room data:", error);
         }
