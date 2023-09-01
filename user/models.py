@@ -42,7 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
         return self._generate_jwt_token( )
 
     def _generate_jwt_token(self):
-        dt = datetime.now( ) + timedelta(days=60) # days=60 / 토큰 만료 기간이 60일
+        dt = datetime.now( ) + timedelta(days=1) # days=60 / 토큰 만료 기간이 60일
 
         token = jwt.encode({
             'id': self.pk,

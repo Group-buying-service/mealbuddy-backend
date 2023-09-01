@@ -21,9 +21,14 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'core.exceptions.core_exception_handler',
     'NON_FIELD_ERRORS_KEY': 'error',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'user.backends.JWTAuthentication',
+        # 'user.backends.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         ),
 }
+
+
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -35,6 +40,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
+
+
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = False
@@ -64,6 +72,7 @@ INSTALLED_APPS = [
     'user',
     'blog',
     'openAPI',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
