@@ -30,6 +30,8 @@
         baseURL: baseURL,
       })
       API.defaults.headers.common['X-CSRFToken'] = csrftoken;
+      const accessToken = localStorage.getItem('token')
+      API.defaults.headers.common['Authorization'] = `token ${accessToken}`
 
       const connectWS = async () => {
         const chatSocket = new WebSocket(
