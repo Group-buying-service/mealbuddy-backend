@@ -43,8 +43,21 @@ def food_choicer(request):
     return Response({"message": gpt_response}, status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+def weather(request):
+
+    lat = float(request.GET.get('lat'))
+    lon = float(request.GET.get('lon'))
+
+    # print(lat, lon, type(lat), type(lon))
+
+    weather_data = request_weather_data(lat, lon)
+
+    return Response(weather_data, status=status.HTTP_200_OK)
+
+
 def index(request):
-    return render(request, "foodchoicer/index.html")
+    return render(request, "openAPI/index.html")
 
 
 

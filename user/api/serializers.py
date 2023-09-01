@@ -38,6 +38,7 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=128, write_only=True)
     last_login = serializers.CharField(max_length=255, read_only=True)
     token = serializers.CharField(max_length=255, read_only=True)
+    id = serializers.IntegerField(read_only=True)
 
     def validate(self, data):
         email = data.get('email', None)
@@ -73,7 +74,8 @@ class LoginSerializer(serializers.Serializer):
             'email': user.email,
             'username': user.username,
             'last_login': user.last_login,
-            'token': user.token
+            'token': user.token,
+            'id': user.id,
         }
 
 
@@ -94,9 +96,10 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             'password',
             'address'
             'token'
+            'id',
         ]
 
-        read_only_fields = ('token', )
+        read_only_fields = ('token', 'id',)
 
     def update(self, instance, validated_data):
         password = validated_data.pop('password', None)

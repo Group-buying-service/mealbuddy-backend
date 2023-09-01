@@ -14,10 +14,13 @@ class Post(models.Model):
     # 완료여부
     is_compelete = models.BooleanField(default=False)
     # 목표인원
-    target_number = models.IntegerField("목표인원", default = 0, validators=[MinValueValidator(1), MaxValueValidator(10)], help_text="최대 10명만 가능합니다.")
+    target_number = models.IntegerField("목표인원", default=1, validators=[MinValueValidator(1), MaxValueValidator(10)], help_text="최대 10명만 가능합니다.")
     # 참여인원
-    join_number = models.PositiveIntegerField(default=0)
+    join_number = models.PositiveIntegerField(default=1)
     recruited_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='recruited_posts', blank=True)
+
+    class Meta:
+        ordering = ['-id']
 
 
 
