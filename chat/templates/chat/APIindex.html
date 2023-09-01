@@ -15,6 +15,12 @@
       <input type="submit" value="접근권한얻기">
     </form>
 
+    <form method="post" id="createRoom">
+      <input type="text" name="room_id" placeholder="방 아이디"><br>
+      <input type="text" name="post_id" placeholder="게시글 아이디"><br>
+      <input type="submit" value="방 만들기">
+    </form>
+
     <script>
         const baseURL = 'http://127.0.0.1:8000'
         const csrftoken = document.cookie.match(/csrftoken=([^;]+)/)[1];
@@ -22,6 +28,8 @@
         const API = axios.create({
           baseURL: baseURL,
         })
+        const accessToken = localStorage.getItem('token')
+        API.defaults.headers.common['Authorization'] = `token ${accessToken}`
         API.defaults.headers.common['X-CSRFToken'] = csrftoken;
 
         document.querySelector('#room-name-input').focus();
@@ -47,6 +55,22 @@
         roomJoinForm.addEventListener("submit", async (e) => {
           e.preventDefault()
           const URL = `/chat/API/${e.target.room_id.value}/`
+          const response = await API.post(URL, {
+            withCredentials: true,
+            credentials: 'include',
+          }).then((res) => {
+            window.location.href = `/chat/${e.target.room_id.value}/`
+          }).catch((error) => {
+            alert(error.response.data)
+          })
+        })
+
+        roomCreateForm = document.querySelector("#createRoom");
+
+        roomCreateForm.addEventListener("submit", async (e) => {
+          e.preventDefalut();
+          const URL = `/chat/API/${e.target.room_id.value}/`
+          const data = {post_id: e.target.post_id.value}
           const response = await API.post(URL, {
             withCredentials: true,
             credentials: 'include',

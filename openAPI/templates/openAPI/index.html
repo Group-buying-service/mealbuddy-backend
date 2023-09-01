@@ -27,13 +27,17 @@
     })
 
     const FoodChoicerAPI = async () => {
-      const response = await API.get(`${baseURL}/foodchoicer/API?lat=${lat}&lon=${lon}`)
+      const response = await API.get(`${baseURL}/openAPI/foodchoicer/?lat=${lat}&lon=${lon}`)
       return response
     }
 
     foodChoicerButton.addEventListener("click", async ()=> {
       const data = await FoodChoicerAPI()
-      foodChoicerResult.value = data.data.message
+      console.log(data.data)
+      for (key in data.data) {
+        foodChoicerResult.value += `${key} : ${data.data[key]}\n`
+      }
+      
     })
 
   </script>
