@@ -97,7 +97,7 @@ class ProfileUpdateView(APIView):
     def put(self, request):
         user = request.user
         serializer = UserUpdateSerializer(
-            User, data=request.data, partial=True)
+            user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -125,23 +125,3 @@ class DeleteUserView(APIView):
 
         return Response({'message': '유효하지 않는 유저정보 입니다.'}, status=status.HTTP_401_UNAUTHORIZED)
 
-# UserDetail
-class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
-    permission_classes = (IsAuthenticated,)
-    renderer_classes = (UserJSONRenderer,)
-    serializer_class = UserUpdateSerializer
-
-    def get(self, request, *args, **kwargs):
-        serializer = self.serializer_class(request.user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def patch(self, request, *args, **kwargs):
-        serializer_data = request.data
-        serializer = self.serializer_class(
-            request.user, data=serializer_data, partial=True
-        )
-
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        return Response(serializer.data, status=status.HTTP_200_OK)

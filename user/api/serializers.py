@@ -23,6 +23,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'username',
             'email',
             'password',
+            'address',
             'token'
         ]
 
@@ -91,6 +92,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             'email',
             'username',
             'password',
+            'address'
             'token'
         ]
 
