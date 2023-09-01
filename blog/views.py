@@ -44,9 +44,8 @@ class Write(APIView):
         serializer = PostSerializer(data=request.data)  # 요청 데이터로 Serializer 인스턴스 생성
         
         if serializer.is_valid():
-            serializer.save(writer=request.user)  # 현재 사용자 설정
+            serializer.save(writer=request.user.username, address = request.user.profile.address)  # 현재 사용자 설정
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        print(request.user.id)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -56,7 +55,7 @@ class Update(APIView):
         serializer = PostSerializer(post)
         return Response(serializer.data)
 
-    def put(self, request, pk):
+    def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         serializer = PostSerializer(post, data=request.data)
         

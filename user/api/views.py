@@ -1,17 +1,20 @@
 # user > views.py
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.views import APIView
+
+from django.contrib.auth import get_user_model
+
 from rest_framework.authtoken.models import Token
-from .serializers import RegistrationSerializer, LoginSerializer, UserUpdateSerializer, ChangePasswordSerializer, User, DeleteUserSerializer, UserSerializer
+from .serializers import RegistrationSerializer, LoginSerializer, UserUpdateSerializer, ChangePasswordSerializer, User, DeleteUserSerializer
 from .renderers import UserJSONRenderer
 from user.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
-
+User = get_user_model()
 # Create your views here.
 # Register
 class RegistrationAPIView(APIView):
@@ -157,7 +160,7 @@ class ChangePasswordView(APIView):
 class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = (UserJSONRenderer,)
-    serializer_class = UserSerializer
+    serializer_class = UserUpdateSerializer
 
     def get(self, request, *args, **kwargs):
         serializer = self.serializer_class(request.user)

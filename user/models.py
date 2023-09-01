@@ -11,10 +11,9 @@ from core.models import TimestampedModel
 
 
 
-
 class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
     
-    username = models.CharField(max_length=255)
+    username = models.CharField(max_length=255, unique=True)
     email = models.EmailField(db_index=True, unique=True)
     password = models.CharField(max_length=255)
     is_active = BooleanField(default=True)
@@ -35,14 +34,6 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
     def get_short_name(self):
         return self.username
     
-# 유저 프로필
-class Profile(models.Model):
-    email = models.EmailField(unique=True)
-    username = models.CharField(max_length=50)
-    address = models.CharField(max_length=50)
-
-    def str(self):
-        return self.username
 
     # token 생성 함수
     @property
@@ -59,3 +50,11 @@ class Profile(models.Model):
 
         return token
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    email = models.EmailField(unique=True)
+    username = models.CharField(max_length=50)
+    address = models.CharField(max_length=50)
+
+    def str(self):
+        return self.username

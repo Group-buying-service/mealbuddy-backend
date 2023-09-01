@@ -6,8 +6,6 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework.authtoken.models import Token
 
 # Register
-
-
 class RegistrationSerializer(serializers.ModelSerializer):
 
     # password 최소 8자 ~ 최대 128자
@@ -39,7 +37,7 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=128, write_only=True)
     last_login = serializers.CharField(max_length=255, read_only=True)
     token = serializers.CharField(max_length=255, read_only=True)
-    
+
     def validate(self, data):
         email = data.get('email', None)
         password = data.get('password', None)
@@ -79,7 +77,7 @@ class LoginSerializer(serializers.Serializer):
 
 
 # UserDetail
-class UserSerializer(serializers.ModelSerializer):
+class UserUpdateSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(
         max_length=128,

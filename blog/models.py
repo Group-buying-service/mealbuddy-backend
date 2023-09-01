@@ -11,7 +11,7 @@ class Post(models.Model):
     category = models.CharField(max_length=30, choices=category_choices, default='치킨',verbose_name='카테고리종류')
     content = models.TextField()
     writer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    address = models.OneToOneField(Profile, on_delete=models.SET_NULL, null=True, blank=True)
+    address = models.CharField(max_length=30)
     created_at = models.DateTimeField(auto_now_add = True)
     # 완료여부
     is_compelete = models.BooleanField(default=False)
