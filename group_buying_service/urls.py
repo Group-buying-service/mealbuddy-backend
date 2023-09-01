@@ -25,7 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('blog/', include('blog.urls')),
     path("chat/", include("chat.urls")),
-    path('user/', include('user.api.urls'), name='user'),
+    path('user/', include('user.api.urls')),
     path("foodchoicer/", include("foodchoicer.urls")),
     path('', views.IndexMain.as_view()),
 ]

@@ -14,7 +14,7 @@ class ChatRoom(models.Model):
     owner = models.ForeignKey(to=User, on_delete=models.CASCADE, help_text="채팅방의 소유자")
     is_deleted = models.BooleanField(default=False)
     blacklist = ArrayField(models.CharField(max_length=20), blank=True, null=True, default=list)
-    # post = models.ForeignKey(to='Chat', on_delete=models.CASCADE)
+    post = models.OneToOneField(to='blog.Post', on_delete=models.CASCADE, db_column="post_id")
 
     class Meta:
         db_table = "chatRoom"
