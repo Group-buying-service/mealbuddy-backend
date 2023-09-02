@@ -12,7 +12,7 @@ from core.models import TimestampedModel
 
 class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
     
-    username = models.CharField(max_length=255)
+    username = models.CharField(max_length=255, unique=True)
     email = models.EmailField(db_index=True, unique=True)
     password = models.CharField(max_length=255)
     address = models.CharField(max_length=200)
@@ -52,11 +52,10 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
 
 
 class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=50)
-    address = models.CharField(max_length=200, null=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    
-    def __str__(self):
+    address = models.CharField(max_length=50)
+
+    def str(self):
         return self.username
-    
