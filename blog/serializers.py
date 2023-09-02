@@ -8,7 +8,7 @@ User = get_user_model()
 class WriterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email']
+        fields = ['id', 'username', 'email']
 
 # Serializer 정의
 class PostSerializer(serializers.ModelSerializer):
