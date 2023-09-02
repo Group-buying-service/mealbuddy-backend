@@ -5,7 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from  django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from .models import Post
 from user.models import Profile
-from .forms import PostForm
+from chat.models import ChatRoomJoin
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -14,6 +14,8 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import PostSerializer
+
+
 ### Post
 class Index(APIView):
     
@@ -35,7 +37,7 @@ class Index(APIView):
         
         
         serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
 
 
@@ -49,7 +51,6 @@ class Write(APIView):
     
     def post(self, request):
         serializer = PostSerializer(data=request.data)  # 요청 데이터로 Serializer 인스턴스 생성
-        
         if serializer.is_valid():
             serializer.save(writer=request.user, address = request.user.profile.address)  # 현재 사용자 설정
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -86,7 +87,9 @@ class DetailView(APIView):
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         serializer = PostSerializer(post)
-        return Response(serializer.data)
+        chatroom = post.chatroom
+        is_joined = ChatRoomJoin.objects.filter(chatroom=chatroom, user=request.user, is_deleted=False).exists()
+        return Response({**serializer.data, 'is_joined':is_joined})
 
 
 # 참여버튼

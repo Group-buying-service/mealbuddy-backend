@@ -74,7 +74,9 @@ def request_weather_data(lat, lon, basedate = None, time = None, pageNo=1, numOf
     payload = f"?serviceKey={weather_API_key}&numOfRows={numOfRows}&pageNo={pageNo}&dataType=json&base_date={base_date}&base_time={base_time}&nx={nx}&ny={ny}"
 
     res = requests.get(weather_API_url + payload)
-
-    items = res.json().get('response').get('body').get('items')
-
-    return get_weather_data(items)
+    if res.status_code < 300 :
+        items = res.json().get('response').get('body').get('items')
+        return get_weather_data(items)
+    else:
+        return False
+        
