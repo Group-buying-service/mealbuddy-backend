@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Chat Rooms</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    What chat room would you like to enter?<br>
+    <input id="room-name-input" type="text" size="100"><br>
+    <input id="room-name-submit" type="button" value="Enter">
+
+    <form method="post" id="getRoomJoinPermission">
+      <input type="text" name="room_id"><br>
+      <input type="submit" value="접근권한얻기">
+    </form>
+
+    <form method="post" id="createRoom">
+      <input type="text" name="room_id" placeholder="방 아이디"><br>
+      <input type="text" name="post_id" placeholder="게시글 아이디"><br>
+      <input type="submit" value="방 만들기">
+    </form>
+
+    <script>
+        const baseURL = 'http://127.0.0.1:8000'
+        const csrftoken = document.cookie.match(/csrftoken=([^;]+)/)[1];
+        // Axios 요청 시에 헤더에 CSRF 토큰 포함
+        const API = axios.create({
+          baseURL: baseURL,
+        })
+        const accessToken = localStorage.getItem('token')
+        API.defaults.headers.common['Authorization'] = `token ${accessToken}`
+        API.defaults.headers.common['X-CSRFToken'] = csrftoken;
+
+        document.querySelector('#room-name-input').focus();
+        document.querySelector('#room-name-input').onkeyup = function(e) {
+            if (e.key === 'Enter') {  // enter, return
+                document.querySelector('#room-name-submit').click();
+            }
+        };
+
+        document.querySelector('#room-name-submit').onclick = async function(e) {
+            var roomName = document.querySelector('#room-name-input').value;
+            //const URL = `/chat/API/${roomName}/`
+            window.location.href = '/chat/' + roomName + '/';
+            //const response = await API.get(URL).then((res) => {
+            //  const data = res.data
+            //  console.log(data)
+            //})
+            
+        };
+
+        roomJoinForm = document.querySelector('#getRoomJoinPermission');
+
+        roomJoinForm.addEventListener("submit", async (e) => {
+          e.preventDefault()
+          const URL = `/chat/API/${e.target.room_id.value}/`
+          const response = await API.post(URL, {
+            withCredentials: true,
+            credentials: 'include',
+          }).then((res) => {
+            window.location.href = `/chat/${e.target.room_id.value}/`
+          }).catch((error) => {
+            alert(error.response.data)
+          })
+        })
+
+        roomCreateForm = document.querySelector("#createRoom");
+
+        roomCreateForm.addEventListener("submit", async (e) => {
+          e.preventDefalut();
+          const URL = `/chat/API/${e.target.room_id.value}/`
+          const data = {post_id: e.target.post_id.value}
+          const response = await API.post(URL, {
+            withCredentials: true,
+            credentials: 'include',
+          }).then((res) => {
+            window.location.href = `/chat/${e.target.room_id.value}/`
+          }).catch((error) => {
+            alert(error.response.data)
+          })
+        })
+    </script>
+</body>
+</html>
