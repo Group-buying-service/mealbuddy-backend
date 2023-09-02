@@ -1,6 +1,6 @@
 from .models import ChatRoom, ChatRoomJoin, ChatMessage
 from .serializer import ChatMessageSerializer
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -40,13 +40,12 @@ def chatroomjoin_deleted(sender, instance, created, **kwargs):
         )
 
 
-@receiver(post_save, sender=ChatRoom)
-def chatroom_deleted(sender, instance, created, **kwargs):
-    if not created and instance.is_deleted:
-        chat_group_name = f"chat_{instance.pk}"
-        async_to_sync(channels_layer.group_send)(
-            chat_group_name,
-            {
-                "type": "chat.room.deleted",
-            }
-        )
+@receiver(post_delete, sender=ChatRoom)
+def chatroom_deleted(sender, instance, **kwargs):
+    chat_group_name = f"chat_{instance.pk}"
+    async_to_sync(channels_layer.group_send)(
+        chat_group_name,
+        {
+            "type": "chat.room.deleted",
+        }
+    )

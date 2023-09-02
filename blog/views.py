@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from  django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from .models import Post
 from user.models import Profile
 from chat.models import ChatRoomJoin
+from group_buying_service.utils.paginator import get_page_data
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -17,31 +18,40 @@ from .serializers import PostSerializer
 
 
 ### Post
+
+
 class Index(APIView):
     
     def get(self, request):
+        # posts = Post.objects.all().order_by('created_at')
+        page  = request.GET.get('page', '')
         selected_category = request.GET.get('category')
-        posts = Post.objects.all().order_by('created_at')
-        page  = request.GET.get('page', '1')
-        paginator = Paginator(posts, 5)  # 페이지당 10개씩 보여주기
-        page_obj = paginator.get_page(page)
-        
         user_profile = Profile.objects.get(user=self.request.user)
         user_address = user_profile.address       
         queryset = Post.objects.filter(address=user_address) # 동일한 주소를 가진 게시글 필터링
 
         if selected_category:
-            posts = queryset.filter(category=selected_category)
+            posts = queryset.filter(category=selected_category).order_by('-created_at')
         else:
-            posts = queryset.all()
+            posts = queryset.order_by('created_at')
+        paginator = Paginator(posts, 10)  # 페이지당 10개씩 보여주기
+        try:
+            page_object = paginator.page(page)
+        except PageNotAnInteger:
+            page = 1
+            page_object = paginator.page(page)
+        except EmptyPage:
+            if page <= 0:
+                page = 1
+                page_object = paginator.page(page)
+            else:
+                page = paginator.num_pages
+                page_object = paginator.page(page)
         
-        
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
+        serializer = PostSerializer(page_object, many=True)
+        page_data = get_page_data(page, len(paginator.page_range))
 
-
-
+        return Response({'posts': serializer.data, 'paginator': page_data}, status=status.HTTP_200_OK)
 
 
 class Write(APIView):
@@ -58,6 +68,7 @@ class Write(APIView):
 
 
 class Update(APIView):
+
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         serializer = PostSerializer(post)
@@ -65,22 +76,23 @@ class Update(APIView):
 
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
-        serializer = PostSerializer(post, data=request.data)
+        serializer = PostSerializer(post, data=request.data, partial=True)
         
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            chatroom = post.chatroom
+            is_joined = ChatRoomJoin.objects.filter(chatroom=chatroom, user=request.user, is_deleted=False).exists()
+            return Response({**serializer.data, 'is_joined':is_joined})
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        
 
-class Delete(View):
-    
+class Delete(APIView):
+
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         post.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response('삭제되었습니다.', status=status.HTTP_204_NO_CONTENT)
 
 
 class DetailView(APIView):

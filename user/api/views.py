@@ -1,5 +1,7 @@
 # user > views.py
 from django.shortcuts import render, redirect
+from django.middleware.csrf import get_token
+
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -31,7 +33,10 @@ class RegistrationAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        response = Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(get_token(request))
+        response.set_cookie('csrftoken', get_token(request))
+        return response
 
 
 # 로그인
@@ -46,7 +51,9 @@ class LoginAPIView(APIView):
         serializer = self.serializer_class(data=user)
         serializer.is_valid(raise_exception=True)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        response = Response(serializer.data, status=status.HTTP_200_OK)
+        response.set_cookie('csrftoken', get_token(request))
+        return response
 
 
 # 로그아웃
@@ -139,4 +146,6 @@ class UserCheckAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
         serializer = self.serializer_class(request.user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        response = Response(serializer.data, status=status.HTTP_200_OK)
+        response.set_cookie('csrftoken', get_token(request))
+        return response
