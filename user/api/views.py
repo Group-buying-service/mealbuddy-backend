@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 
 from rest_framework.authtoken.models import Token
-from .serializers import RegistrationSerializer, LoginSerializer, UserUpdateSerializer, ChangePasswordSerializer, User, DeleteUserSerializer
+from .serializers import RegistrationSerializer, LoginSerializer, ChangePasswordSerializer, User, DeleteUserSerializer, UserSerializer
 from .renderers import UserJSONRenderer
 from user.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
@@ -17,6 +17,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 User = get_user_model()
+
+
 # Create your views here.
 # 회원가입
 class RegistrationAPIView(APIView):
@@ -61,6 +63,7 @@ class LogoutView(APIView):
         
         return Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
 
+      
 # 비밀번호 변경
 class ChangePasswordView(APIView):
     authentication_classes = [TokenAuthentication]
@@ -83,6 +86,7 @@ class ChangePasswordView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+      
 # 프로필 업데이트
 class ProfileUpdateView(APIView):
     authentication_classes = [TokenAuthentication]
@@ -104,6 +108,7 @@ class ProfileUpdateView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+      
 # 유저 삭제
 class DeleteUserView(APIView):
     permission_classes = [IsAuthenticated]
@@ -125,3 +130,13 @@ class DeleteUserView(APIView):
 
         return Response({'message': '유효하지 않는 유저정보 입니다.'}, status=status.HTTP_401_UNAUTHORIZED)
 
+
+# UserDetail
+class UserCheckAPIView(APIView):
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = (UserJSONRenderer,)
+    serializer_class = UserUpdateSerializer
+
+    def get(self, request, *args, **kwargs):
+        serializer = self.serializer_class(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
