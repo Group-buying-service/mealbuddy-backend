@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from  django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from .models import Post
+from user.models import Profile
 from .forms import PostForm
 from django.db.models import Q
 from django.http import HttpResponseRedirect
@@ -17,15 +18,21 @@ from .serializers import PostSerializer
 class Index(APIView):
     
     def get(self, request):
+        selected_category = request.GET.get('category')
         posts = Post.objects.all().order_by('created_at')
         page  = request.GET.get('page', '1')
         paginator = Paginator(posts, 5)  # 페이지당 10개씩 보여주기
         page_obj = paginator.get_page(page)
-        selected_category = request.GET.get('category')
+        
+        user_profile = Profile.objects.get(user=self.request.user)
+        user_address = user_profile.address       
+        queryset = Post.objects.filter(address=user_address) # 동일한 주소를 가진 게시글 필터링
+
         if selected_category:
-            posts = Post.objects.filter(category=selected_category)
+            posts = queryset.filter(category=selected_category)
         else:
-            posts = Post.objects.all()
+            posts = queryset.all()
+        
         
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
@@ -44,7 +51,7 @@ class Write(APIView):
         serializer = PostSerializer(data=request.data)  # 요청 데이터로 Serializer 인스턴스 생성
         
         if serializer.is_valid():
-            serializer.save(writer=request.user.username, address = request.user.profile.address)  # 현재 사용자 설정
+            serializer.save(writer=request.user, address = request.user.profile.address)  # 현재 사용자 설정
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
