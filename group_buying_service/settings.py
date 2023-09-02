@@ -16,19 +16,18 @@ from decouple import config
 # Auth user
 AUTH_USER_MODEL = 'user.User'
 
-
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'core.exceptions.core_exception_handler',
     'NON_FIELD_ERRORS_KEY': 'error',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'user.backends.JWTAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
         ),
 }
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -37,14 +36,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = False
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = ['*']
 
 # CORS
 # CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:5500', 'http://localhost:5500', 'http://127.0.0.1:8000']
+CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:3000', 'http://localhost:3000']
 CORS_ALLOW_CREDENTIALS = True
+
+# CSRF
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False
+CSRF_USE_SESSIONS = False
+CSRF_COOKIE_NAME = 'csrftoken'
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000']
 
 # Application definition
 
@@ -62,7 +69,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'user',
     'blog',
-    'foodchoicer',
+    'openAPI',
 ]
 
 MIDDLEWARE = [

@@ -20,3 +20,7 @@ class Post(models.Model):
     # 참여인원
     join_number = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(target_number)])
     recruited_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='recruited_posts', blank=True)
+
+    class Meta:
+        ordering = ['-id']
+

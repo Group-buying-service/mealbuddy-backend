@@ -23,7 +23,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'username',
             'email',
             'password',
-            'token'
+            'address',
+            'token',
         ]
 
     def create(self, validated_data):
@@ -33,10 +34,13 @@ class RegistrationSerializer(serializers.ModelSerializer):
 # Login
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
-    username = serializers.CharField(max_length=255, read_only=True)
     password = serializers.CharField(max_length=128, write_only=True)
+    address = serializers.CharField(max_length=255, read_only=True)
+    username = serializers.CharField(max_length=255, read_only=True)
     last_login = serializers.CharField(max_length=255, read_only=True)
     token = serializers.CharField(max_length=255, read_only=True)
+    id = serializers.IntegerField(read_only=True)
+
 
     def validate(self, data):
         email = data.get('email', None)
@@ -72,7 +76,9 @@ class LoginSerializer(serializers.Serializer):
             'email': user.email,
             'username': user.username,
             'last_login': user.last_login,
-            'token': user.token
+            'token': user.token,
+            'address': user.address,
+            'id': user.id,
         }
 
 
@@ -91,10 +97,12 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             'email',
             'username',
             'password',
-            'token'
+            'address',
+            'token',
+            'id',
         ]
 
-        read_only_fields = ('token', )
+        read_only_fields = ('token', 'id',)
 
     def update(self, instance, validated_data):
         password = validated_data.pop('password', None)
