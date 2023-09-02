@@ -1,4 +1,4 @@
-from rest_framework import serializers, viewsets
+from rest_framework import serializers
 from .models import Post
 from django.contrib.auth import get_user_model
 
@@ -24,15 +24,3 @@ class PostSerializer(serializers.ModelSerializer):
         chatroom_id = instance.chatroom.id
         rep['chat_id'] = chatroom_id
         return rep
-
-
-class CommentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = '__all__'
-
-
-class HashTagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = HashTag
-        fields = '__all__'

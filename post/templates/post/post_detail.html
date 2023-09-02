@@ -11,7 +11,7 @@
     <p>{% trans '완료여부:' %}{% if post_is_compelete %} 모집완료 {% else %} 모집중 {% endif %}</p>
 
 
-      <form action="{% url 'blog:participants' pk=post_id %}" method="post">
+      <form action="{% url 'post:participants' pk=post_id %}" method="post">
         {% csrf_token %}
         <button type="submit" name="join" value="True">참여하기</button>
         <button type="submit" name="cancel" value="True">참여 취소</button>
@@ -20,8 +20,8 @@
     
 
     {% if post_writer == request.user %}
-        <a href="{% url 'blog:edit' pk=post_id %}" class="btn">{% trans '수정' %}</a>
-        <form action="{% url 'blog:delete' pk=post_id %}" method="post">
+        <a href="{% url 'post:edit' pk=post_id %}" class="btn">{% trans '수정' %}</a>
+        <form action="{% url 'post:delete' pk=post_id %}" method="post">
             {% csrf_token %}
             <input type="submit" value="{% trans '삭제' %}" class="btn">
         </form>

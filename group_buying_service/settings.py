@@ -47,10 +47,6 @@ CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:3000', 'http://localhost:3000']
 CORS_ALLOW_CREDENTIALS = True
 
 # CSRF
-CSRF_COOKIE_SECURE = False
-CSRF_COOKIE_HTTPONLY = False
-CSRF_USE_SESSIONS = False
-CSRF_COOKIE_NAME = 'csrftoken'
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000']
 
 # Application definition
@@ -68,7 +64,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_extensions',
     'user',
-    'blog',
+    'post',
     'openAPI',
 ]
 

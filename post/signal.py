@@ -8,9 +8,3 @@ def post_created(sender, instance, created, **kwargs):
     if created:
         chat_room = ChatRoom.objects.create(post = instance)
         chat_room_join = ChatRoomJoin.objects.create(chatroom = chat_room, user=instance.writer)
-
-
-# @receiver(post_save, sender=Post)
-# def post_deleted(sender, instance, created, **kwargs):
-#     if not created and instance.is_deleted == True:
-#         chat_room = ChatRoom.objects.get(post = instance)

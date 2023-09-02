@@ -60,7 +60,7 @@
                 {% if null == categories %}
                 <tr>
                     <td>{{ post.pk }}</td>
-                    <td><a href="{% url 'blog:detail' pk=post.pk %}">{{ post.title }}</a></td>
+                    <td><a href="{% url 'post:detail' pk=post.pk %}">{{ post.title }}</a></td>
                     <td>{{ post.category }}</td>
                     <td>{{ post.writer }}</td>
                     <td>{{ post.created_at }}</td>
@@ -70,7 +70,7 @@
                 {% elif "" == categories %}
                 <tr>
                     <td>{{ post.pk }}</td>
-                    <td><a href="{% url 'blog:detail' pk=post.pk %}">{{ post.title }}</a></td>
+                    <td><a href="{% url 'post:detail' pk=post.pk %}">{{ post.title }}</a></td>
                     <td>{{ post.category }}</td>
                     <td>{{ post.writer }}</td>
                     <td>{{ post.created_at }}</td>
@@ -80,7 +80,7 @@
                     {% if post.category == categories %}
                     <tr>
                         <td>{{ post.pk }}</td>
-                        <td><a href="{% url 'blog:detail' pk=post.pk %}">{{ post.title }}</a></td>
+                        <td><a href="{% url 'post:detail' pk=post.pk %}">{{ post.title }}</a></td>
                         <td>{{ post.category }}</td>
                         <td>{{ post.writer }}</td>
                         <td>{{ post.created_at }}</td>
@@ -126,7 +126,7 @@
 <!-- 페이징처리 끝 -->
 
     <div class="btn-group">
-        <form action="{% url 'blog:write' %}" method="get">
+        <form action="{% url 'post:write' %}" method="get">
             <input type="hidden" name="{{ redirect_field_name }}" value="{{ request.GET.next }}">
             <input type="submit" value="글 작성" class="btn">
         </form>

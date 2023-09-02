@@ -21,7 +21,7 @@
 
      {% if user.is_superuser %}
   <div class="header">    
-        <h1><a href="{% url 'blog:list' %}">Blog</a></h1>
+        <h1><a href="{% url 'post:list' %}">Blog</a></h1>
         <div class="header-click">
             <p>{% trans '환영합니다 ' %} {{ request.user }} {% trans ' 님.' %}</p>
             

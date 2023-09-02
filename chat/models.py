@@ -11,7 +11,7 @@ class ChatRoom(models.Model):
 
     is_deleted = models.BooleanField(default=False)
     blacklist = ArrayField(models.CharField(max_length=20), blank=True, null=True, default=list)
-    post = models.OneToOneField(to='blog.Post', on_delete=models.CASCADE, db_column="post_id")
+    post = models.OneToOneField(to='post.Post', on_delete=models.CASCADE, db_column="post_id")
 
     class Meta:
         db_table = "chatRoom"

@@ -6,7 +6,7 @@
     <h1>{% trans "Welcome my blog" %}</h1>
     <br>
     {% if user.is_superuser %}
-    <a href="{% url 'blog:list' %}">{% trans '블로그로 바로가기' %}</a>
+    <a href="{% url 'post:list' %}">{% trans '블로그로 바로가기' %}</a>
     
     {% else %}
         <a href="{% url 'user:register' %}">{% trans '회원가입' %}</a>

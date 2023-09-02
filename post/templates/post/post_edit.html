@@ -4,10 +4,10 @@
 {% block content %}
 
 {% if form.errors %}
-    {% include 'blog/form_error.html' %}
+    {% include 'post/form_error.html' %}
 {% else %}
     {% trans 'Welcome!' %}
-    <form action="{% url 'blog:edit' pk=post.pk %}" method="post">
+    <form action="{% url 'post:edit' pk=post.pk %}" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="{% trans '수정' %}" class="btn">
