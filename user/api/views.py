@@ -13,6 +13,8 @@ from .serializers import RegistrationSerializer, LoginSerializer, UserUpdateSeri
 from .renderers import UserJSONRenderer
 from user.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 User = get_user_model()
 # Create your views here.
@@ -51,15 +53,13 @@ class LoginAPIView(APIView):
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def post(self, request):
         user = request.user
-
-        try:
-            Token.objects.get(user_id=user.id).delete()
-        except Token.DoesNotExist:
-            return Response({'message': '유효하지 않는 유저정보 입니다.'}, status=status.HTTP_404_NOT_FOUND)
-
-        return Response(status=status.HTTP_200_OK)
+        refresh_token = request.data.get('refresh_token') 
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+        
+        return Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
 
 # 비밀번호 변경
 class ChangePasswordView(APIView):
