@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.db.models.fields import BooleanField
 
 from .managers import UserManager
 from core.models import TimestampedModel
@@ -16,8 +15,8 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
     email = models.EmailField(db_index=True, unique=True)
     password = models.CharField(max_length=255)
     address = models.CharField(max_length=200)
-    is_active = BooleanField(default=True)
-    is_staff = BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
     
     USERNAME_FIELD = 'email'
     

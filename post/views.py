@@ -15,17 +15,18 @@ from .serializers import PostSerializer
 class Index(APIView):
     
     def get(self, request):
-        
+
         page  = request.GET.get('page', '')
         selected_category = request.GET.get('category')
-        user_profile = Profile.objects.get(user=self.request.user)
-        user_address = user_profile.address       
+        user = request.user
+        # user_profile = Profile.objects.get(user=request.user)
+        user_address = user.address       
         queryset = Post.objects.filter(address=user_address) # 동일한 주소를 가진 게시글 필터링
 
         if selected_category:
             posts = queryset.filter(category=selected_category).order_by('-created_at')
         else:
-            posts = queryset.order_by('created_at')
+            posts = queryset.order_by('-created_at')
         paginator = Paginator(posts, 10)  # 페이지당 10개씩 보여주기
         try:
             page_object = paginator.page(page)
@@ -55,7 +56,7 @@ class Write(APIView):
     def post(self, request):
         serializer = PostSerializer(data=request.data)  # 요청 데이터로 Serializer 인스턴스 생성
         if serializer.is_valid():
-            serializer.save(writer=request.user, address = request.user.profile.address)  # 현재 사용자 설정
+            serializer.save(writer=request.user, address = request.user.address)  # 현재 사용자 설정
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

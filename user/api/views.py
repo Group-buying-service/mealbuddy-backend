@@ -30,13 +30,13 @@ class RegistrationAPIView(APIView):
         user = request.data
 
         serializer = self.serializer_class(data=user)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
 
-        response = Response(serializer.data, status=status.HTTP_201_CREATED)
-        print(get_token(request))
-        response.set_cookie('csrftoken', get_token(request))
-        return response
+            response = Response(serializer.data, status=status.HTTP_201_CREATED)
+            response.set_cookie('csrftoken', get_token(request))
+            return response
+        return response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # 로그인
@@ -51,6 +51,19 @@ class LoginAPIView(APIView):
         serializer = self.serializer_class(data=user)
         serializer.is_valid(raise_exception=True)
 
+        response = Response(serializer.data, status=status.HTTP_200_OK)
+        response.set_cookie('csrftoken', get_token(request))
+        return response
+
+
+# 토큰으로 유저 정보 반환
+class UserCheckAPIView(APIView):
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = (UserJSONRenderer,)
+    serializer_class = UserUpdateSerializer
+
+    def get(self, request, *args, **kwargs):
+        serializer = self.serializer_class(request.user)
         response = Response(serializer.data, status=status.HTTP_200_OK)
         response.set_cookie('csrftoken', get_token(request))
         return response
@@ -73,7 +86,6 @@ class LogoutView(APIView):
 
 # 비밀번호 변경
 class ChangePasswordView(APIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -82,21 +94,20 @@ class ChangePasswordView(APIView):
             user = request.user
             current_password = serializer.validated_data.get(
                 'current_password')
-            new_password = serializer.validated_data.get('new_password')
+            new_password = serializer.validated_data.get('new_password1')
 
             if user.check_password(current_password):
                 user.set_password(new_password)
                 user.save()
                 return Response({'message': '비밀번호 변경 성공'})
             else:
-                return Response({'error': '현재 암호가 틀립니다.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': ['현재 암호가 올바르지 않습니다.']}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # 프로필 업데이트
 class ProfileUpdateView(APIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -127,25 +138,8 @@ class DeleteUserView(APIView):
         if serializer.is_valid():
             password = serializer.validated_data.get('password')
             if user.check_password(password):
-                try:
-                    Token.objects.get(user_id=user.id).delete()
-                    user.is_active = False
-                    user.save()
-                    return Response(status=status.HTTP_200_OK)
-                except Token.DoesNotExist:
-                    return Response({'message': '유효하지 않는 유저정보 입니다.'}, status=status.HTTP_404_NOT_FOUND)
+                user.is_active = False
+                user.save()
+                return Response(status=status.HTTP_200_OK)
 
-        return Response({'message': '유효하지 않는 유저정보 입니다.'}, status=status.HTTP_401_UNAUTHORIZED)
-
-
-# UserDetail
-class UserCheckAPIView(APIView):
-    permission_classes = (IsAuthenticated,)
-    renderer_classes = (UserJSONRenderer,)
-    serializer_class = UserUpdateSerializer
-
-    def get(self, request, *args, **kwargs):
-        serializer = self.serializer_class(request.user)
-        response = Response(serializer.data, status=status.HTTP_200_OK)
-        response.set_cookie('csrftoken', get_token(request))
-        return response
+        return Response('유효하지 않은 유저정보 입니다.', status=status.HTTP_401_UNAUTHORIZED)

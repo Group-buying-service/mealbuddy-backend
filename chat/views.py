@@ -17,16 +17,6 @@ User = get_user_model()
 
 
 # Create your views here.
-
-def index(request):
-    return render(request, "chat/APIindex.html")
-
-
-def chatRoom(request, room_id):
-    return render(request, 'chat/APIroom.html')
-
-
-
 class ChatRoomAPI(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -163,17 +153,3 @@ def PostChatRoomBanAPI(request, room_id):
     post.join_number = post.join_number - 1
     post.save()
     return Response("해당 유저를 강퇴하였습니다.", status=status.HTTP_202_ACCEPTED)
-
-
-@permission_classes(['IsAuthenticated'])
-@api_view(['GET'])
-def PostChatRoomUserListAPI(request, room_id):
-    # 유저 리스트 확인
-    try:
-        userlist_qs = ChatRoomJoin.objects.filter(chatroom_id=room_id, is_deleted=False)
-    except ObjectDoesNotExist:
-        return Response("채팅방이 존재하지 않습니다.", status=status.HTTP_400_BAD_REQUEST)
-    
-    userlist_serailzer = UserListSerializer(userlist_qs, many=True)
-
-    return Response(userlist_serailzer.data, status=status.HTTP_200_OK)

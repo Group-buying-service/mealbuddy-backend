@@ -23,9 +23,9 @@ app_name = 'user'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('post/', include('post.urls')),
-    path("chat/", include("chat.urls")),
-    path('user/', include('user.api.urls')),
-    path("openAPI/", include("openAPI.urls")),
+    path('api/post/', include('post.urls')),
+    path("api/chat/", include("chat.urls")),
+    path('api/user/', include('user.api.urls')),
+    path("api/openAPI/", include("openAPI.urls")),
     path('', views.IndexMain.as_view()),
 ]

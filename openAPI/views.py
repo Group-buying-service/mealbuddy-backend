@@ -42,7 +42,7 @@ def food_choicer(request):
         gpt_response = request_gpt_response(BASE_MESSAGE, gpt_prompt)
 
         if gpt_response:
-            return Response({"message": gpt_response}, status=status.HTTP_200_OK)
+            return Response(gpt_response, status=status.HTTP_200_OK)
     return Response("예기치 않은 오류가 발생했습니다.", status=status.HTTP_408_REQUEST_TIMEOUT)
 
 

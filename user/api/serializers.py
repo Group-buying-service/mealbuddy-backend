@@ -15,6 +15,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
         write_only=True
     )
 
+    password2 = serializers.CharField(
+        max_length=128,
+        min_length=8,
+        write_only=True
+    )
+
     token = serializers.CharField(max_length=255, read_only=True)
 
     class Meta:
@@ -23,12 +29,19 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'username',
             'email',
             'password',
+            'password2',
             'address',
             'token',
         ]
 
     def create(self, validated_data):
+        validated_data.pop('password2')
         return User.objects.create_user(**validated_data)
+    
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError({'password': "비밀번호가 서로 다릅니다."})
+        return super().validate(attrs)
 
 
 # Login
@@ -120,9 +133,19 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
 class ChangePasswordSerializer(serializers.Serializer):
     current_password = serializers.CharField(required=True)
-    new_password = serializers.CharField(required=True)
+    new_password1 = serializers.CharField(required=True)
+    new_password2 = serializers.CharField(required=True)
 
-    def validate_new_password(self, value):
+    def validate(self, attrs):
+        if attrs.get('new_password1') != attrs.get('new_password2') :
+            raise serializers.ValidationError('패스워드가 서로 다릅니다.')
+
+        if attrs.get('new_password1')  == attrs.get('current_password') :
+            raise serializers.ValidationError('이전과 동일한 패스워드를 사용할 수 없습니다.')
+        
+        return super().validate(attrs)
+
+    def validate_new_password1(self, value):
         validate_password(value)
         return value
 
