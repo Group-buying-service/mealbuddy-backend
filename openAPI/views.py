@@ -31,16 +31,19 @@ def food_choicer(request):
 
     weather_data = request_weather_data(lat, lon)
 
-    gpt_prompt = f"오늘은 {today}야. 오늘의 날씨는 다음과 같아. "
+    if weather_data:
+        gpt_prompt = f"오늘은 {today}야. 오늘의 날씨는 다음과 같아. "
 
-    for key, value in weather_data.items():
-        gpt_prompt += f'{key}은(는) {value}. '
+        for key, value in weather_data.items():
+            gpt_prompt += f'{key}은(는) {value}. '
 
-    gpt_prompt += "적절한 메뉴를 추천해줘."
+        gpt_prompt += "적절한 메뉴를 추천해줘."
 
-    gpt_response = request_gpt_response(BASE_MESSAGE, gpt_prompt)
+        gpt_response = request_gpt_response(BASE_MESSAGE, gpt_prompt)
 
-    return Response({"message": gpt_response}, status=status.HTTP_200_OK)
+        if gpt_response:
+            return Response({"message": gpt_response}, status=status.HTTP_200_OK)
+    return Response("예기치 않은 오류가 발생했습니다.", status=status.HTTP_408_REQUEST_TIMEOUT)
 
 
 @api_view(['GET'])
@@ -52,8 +55,9 @@ def weather(request):
     # print(lat, lon, type(lat), type(lon))
 
     weather_data = request_weather_data(lat, lon)
-
-    return Response(weather_data, status=status.HTTP_200_OK)
+    if weather_data:
+        return Response(weather_data, status=status.HTTP_200_OK)
+    return Response("예기치 않은 오류가 발생했습니다.", status=status.HTTP_408_REQUEST_TIMEOUT)
 
 
 def index(request):

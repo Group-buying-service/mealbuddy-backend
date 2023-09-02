@@ -11,14 +11,17 @@ def request_gpt_response(base_message, string):
     messages = base_message[:]
     messages.append({"role": "user", "content": string})
 
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages = messages,
-        max_tokens=1024,
-        n=1,
-        stop=None,
-        temperature=1.0,
-    )
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages = messages,
+            max_tokens=1024,
+            n=1,
+            stop=None,
+            temperature=1.0,
+        )
+    except:
+        return False
 
     response = response.choices[0]['message']['content'].strip()
 
