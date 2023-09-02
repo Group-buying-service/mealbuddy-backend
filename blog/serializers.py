@@ -16,4 +16,3 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
 
-
