@@ -25,7 +25,6 @@ class ChatConsumer(JsonWebsocketConsumer):
             self.room_group_name, self.channel_name
         )
 
-
     # WS 에서 메세지 받아옴.
     def receive_json(self, json_data):
         message = json_data["message"]
