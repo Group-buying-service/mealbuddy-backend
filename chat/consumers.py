@@ -1,7 +1,7 @@
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 
-from .models import ChatRoom, ChatRoomJoin, ChatMessage
+from .models import ChatMessage
 from .serializer import ChatMessageSerializer
 
 
@@ -24,7 +24,6 @@ class ChatConsumer(JsonWebsocketConsumer):
         async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name, self.channel_name
         )
-
 
     # WS 에서 메세지 받아옴.
     def receive_json(self, json_data):

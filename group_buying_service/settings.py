@@ -37,7 +37,7 @@ SECRET_KEY = config('SECRET_KEY')
 # DEBUG = False
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', '13.209.142.169']
 
 # CORS
 # CORS_ORIGIN_ALLOW_ALL = False

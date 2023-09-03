@@ -138,10 +138,10 @@ class ChangePasswordSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         if attrs.get('new_password1') != attrs.get('new_password2') :
-            raise serializers.ValidationError('패스워드가 서로 다릅니다.')
+            raise serializers.ValidationError({'new_password1':'패스워드가 서로 다릅니다.'})
 
         if attrs.get('new_password1')  == attrs.get('current_password') :
-            raise serializers.ValidationError('이전과 동일한 패스워드를 사용할 수 없습니다.')
+            raise serializers.ValidationError({'new_password1':'이전과 동일한 패스워드를 사용할 수 없습니다.'})
         
         return super().validate(attrs)
 

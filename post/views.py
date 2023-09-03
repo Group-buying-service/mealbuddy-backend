@@ -16,7 +16,7 @@ class Index(APIView):
     
     def get(self, request):
 
-        page  = request.GET.get('page', '')
+        page = request.GET.get('page', 1)
         selected_category = request.GET.get('category')
         user = request.user
         # user_profile = Profile.objects.get(user=request.user)
@@ -42,7 +42,7 @@ class Index(APIView):
                 page_object = paginator.page(page)
         
         serializer = PostSerializer(page_object, many=True)
-        page_data = get_page_data(page, len(paginator.page_range))
+        page_data = get_page_data(int(page), len(paginator.page_range))
 
         return Response({'posts': serializer.data, 'paginator': page_data}, status=status.HTTP_200_OK)
 

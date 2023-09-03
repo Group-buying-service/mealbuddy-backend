@@ -1,6 +1,6 @@
 import requests
 import json
-from datetime import datetime 
+from datetime import datetime, timedelta
 from decouple import config
 from group_buying_service.utils.coordinate_convert import convertToXy 
 
@@ -13,7 +13,7 @@ def convert_hour(hour):
     
     nearest_past_hour = max(filter(lambda x: x <= int(hour), past_hours))
     
-    return str(nearest_past_hour)+'00'
+    return str(nearest_past_hour).zfill(2)+'00'
 
 
 def get_weather_data(items):
@@ -68,7 +68,11 @@ def request_weather_data(lat, lon, basedate = None, time = None, pageNo=1, numOf
         today = datetime.today()
         base_date = today.strftime("%Y%m%d")
         time = today.strftime("%H")
-    base_time = convert_hour(time)
+    if int(time) <= 2:
+        base_time = '2300'
+        base_date = (datetime.today() - timedelta(days=1)).strftime("%Y%m%d")
+    else:
+        base_time = convert_hour(time)
     nx, ny = convertToXy(lat,lon)
 
     payload = f"?serviceKey={weather_API_key}&numOfRows={numOfRows}&pageNo={pageNo}&dataType=json&base_date={base_date}&base_time={base_time}&nx={nx}&ny={ny}"
@@ -77,7 +81,6 @@ def request_weather_data(lat, lon, basedate = None, time = None, pageNo=1, numOf
         res = requests.get(weather_API_url + payload)
     except:
         return False
-    
     items = res.json().get('response').get('body').get('items')
     return get_weather_data(items)
 
