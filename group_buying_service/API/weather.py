@@ -13,7 +13,7 @@ def convert_hour(hour):
     
     nearest_past_hour = max(filter(lambda x: x <= int(hour), past_hours))
     
-    return str(nearest_past_hour)+'00'
+    return str(nearest_past_hour).zfill(2)+'00'
 
 
 def get_weather_data(items):
@@ -81,7 +81,6 @@ def request_weather_data(lat, lon, basedate = None, time = None, pageNo=1, numOf
         res = requests.get(weather_API_url + payload)
     except:
         return False
-    
     items = res.json().get('response').get('body').get('items')
     return get_weather_data(items)
 
