@@ -37,15 +37,15 @@ SECRET_KEY = config('SECRET_KEY')
 # DEBUG = False
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['*', '13.209.142.169']
+ALLOWED_HOSTS = ['mealbuddy.space', '13.209.142.169']
 
 # CORS
 # CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:3000', 'http://localhost:3000']
+CORS_ORIGIN_WHITELIST = ['https://mealbuddy.space', 'https://13.209.142.169']
 CORS_ALLOW_CREDENTIALS = True
 
 # CSRF
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000']
+CSRF_TRUSTED_ORIGINS = ['https://mealbuddy.space', 'https://13.209.142.169']
 
 # Application definition
 
