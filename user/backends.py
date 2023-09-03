@@ -3,7 +3,9 @@
 import jwt
 
 from django.conf import settings
+from channels.db import database_sync_to_async
 from rest_framework import authentication, exceptions
+from channels.middleware import BaseMiddleware
 
 from .models import User
 
@@ -89,3 +91,29 @@ class JWTAuthentication(authentication.BaseAuthentication):
             raise exceptions.AuthenticationFailed(msg)
 
         return (user, token)
+    
+
+class JWTAuthMiddleware(BaseMiddleware):
+
+    def __init__(self, inner):
+        self.inner = inner
+
+    async def __call__(self, scope, receive, send):
+        # JWT 검증
+        jwt_token = self.get_jwt_token_from_scope(scope)
+        user = await self.get_user_from_jwt(jwt_token)
+        scope["user"] = user
+        return await super().__call__(scope, receive, send)
+
+    def get_jwt_token_from_scope(self, scope):
+        query_string = scope.get("query_string", b"").decode("utf-8")
+        parts = query_string.split("=")
+        if len(parts) > 1:
+            return parts[1]
+        return ""
+
+    @database_sync_to_async
+    def get_user_from_jwt(self, token):
+        decoded_payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+        user_id = decoded_payload["id"]
+        return User.objects.get(id=user_id)
