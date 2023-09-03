@@ -16,13 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from decouple import config
 
 from . import views
 
 app_name = 'user'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path(f'api/{config("ADMIN_PAGE")}/', admin.site.urls),
     path('api/post/', include('post.urls')),
     path("api/chat/", include("chat.urls")),
     path('api/user/', include('user.api.urls')),
