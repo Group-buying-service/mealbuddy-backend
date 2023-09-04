@@ -1,20 +1,16 @@
 # user > views.py
-from django.shortcuts import render, redirect
 from django.middleware.csrf import get_token
 
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.views import APIView
 
 from django.contrib.auth import get_user_model
 
-from rest_framework.authtoken.models import Token
 from .serializers import RegistrationSerializer, LoginSerializer, ChangePasswordSerializer, User, DeleteUserSerializer, UserUpdateSerializer
 from .renderers import UserJSONRenderer
 from user.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
 
 User = get_user_model()
 
@@ -67,21 +63,6 @@ class UserCheckAPIView(APIView):
         response = Response(serializer.data, status=status.HTTP_200_OK)
         response.set_cookie('csrftoken', get_token(request))
         return response
-
-
-# 로그아웃
-class LogoutView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        user = request.user
-
-        try:
-            Token.objects.get(user_id=user.id).delete()
-        except Token.DoesNotExist:
-            return Response({'message': '유효하지 않는 유저정보 입니다.'}, status=status.HTTP_404_NOT_FOUND)
-
-        return Response(status=status.HTTP_200_OK)
 
 
 # 비밀번호 변경

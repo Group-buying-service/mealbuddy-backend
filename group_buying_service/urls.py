@@ -18,8 +18,6 @@ from django.contrib import admin
 from django.urls import path, include
 from decouple import config
 
-from . import views
-
 app_name = 'user'
 
 urlpatterns = [
@@ -28,5 +26,4 @@ urlpatterns = [
     path("api/chat/", include("chat.urls")),
     path('api/user/', include('user.api.urls')),
     path("api/openAPI/", include("openAPI.urls")),
-    path('', views.IndexMain.as_view()),
 ]

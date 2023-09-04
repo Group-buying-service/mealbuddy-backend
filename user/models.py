@@ -48,13 +48,3 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
         }, settings.SECRET_KEY, algorithm='HS256')
 
         return token
-
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    email = models.EmailField(unique=True)
-    username = models.CharField(max_length=50)
-    address = models.CharField(max_length=50)
-
-    def str(self):
-        return self.username

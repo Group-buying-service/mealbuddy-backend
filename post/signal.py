@@ -1,6 +1,6 @@
 from chat.models import ChatRoom, ChatRoomJoin
 from .models import Post
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 @receiver(post_save, sender=Post)
