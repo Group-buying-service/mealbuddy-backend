@@ -55,26 +55,26 @@ Password : password123
 ## 🚩 API 경로
 
 **백엔드**  
+- prefix: `/api`
+
 |URL|기능|
 |---|---|
 |`/user/login/`|로그인|
-|`/user/logout/`|로그아웃|
-|`/user/signup/`|회원가입|
+|`/user/register/`|회원가입|
 |`/user/delete/`|회원탈퇴|
-|`/user/password/change/`|비밀번호 변경|
-|`/user/profile/`|프로필 확인 및 수정|
-|`/token/refresh/`|JWT 토큰 갱신|
-|`/chat/list/`|게시글 목록 및 검색|
-|`/chat/list/self/`|자신의 게시글 목록|
-|`/chat/detail/<chat_id>/`|채팅페이지|
-|`/chat/<chat_id>/update/`|채팅 제목 수정 및 추가질문|
-|`/chat/write/`|채팅 페이지 작성|
-|`/chat/delete/<chat_id>`|채팅 삭제|
-|`/chat/<chat_id>/comment/write/`|댓글 작성|
-|`/chat/comment/delete/<comment_id>`|댓글 삭제|
-|`/chat/comment/delete/child/<childcomment_id>`|대댓글 삭제(댓글과 같은 뷰)|
-|`/chat/comment/update/<comment_id>`|댓글 수정|
-|`/chat/comment/update/child/<childcomment_id>`|대댓글 수정(댓글과 같은 뷰)|
+|`/user/changepassword/`|비밀번호 변경|
+|`/user/update/`|유저정보 수정|
+|`/user/current/`|유저정보 확인|
+|`/post/`|글 목록 조회|
+|`/post/detail/<post_id>/`|글 상세 조회|
+|`/post/write/`|글 작성|
+|`/post/detail/<post_id>/edit/`|글 수정|
+|`/post/detail/<post_id>/delete/`|글 삭제|
+|`/chat/<room_id>/`|채팅방 상태 조회, 채팅방 접근권한 얻기, 채팅방 삭제|
+|`/chat/<room_id>/user/`|채팅방 유저 조회, 채팅방 나가기|
+|`/chat/<room_id>/user/ban/`|채팅방 유저 강퇴|
+|`/openAPI/weather/`|날씨 정보 조회|
+|`/openAPI/foodchoicer/`|음식 추천|
 
 ## 🛢데이터베이스 설계
 
