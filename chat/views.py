@@ -39,13 +39,12 @@ class ChatRoomAPI(APIView):
                 return chat_room_join
         return False
 
-    def chat_room_render(self, chat_room, user):
+    def chat_room_render(self, chat_room):
         messages = ChatMessage.objects.filter(chatroom = chat_room.pk)
         serialized_messages = ChatMessageSerializer(instance=messages, many=True)
         post = chat_room.post
         serialized_post = ChatRoomPostSerializer(instance=post)
-        serialized_user = UserSerializer(instance=user)
-        return Response({"messages":serialized_messages.data, "user": serialized_user.data, **serialized_post.data}, status=status.HTTP_200_OK)
+        return Response({"messages":serialized_messages.data, **serialized_post.data}, status=status.HTTP_200_OK)
 
 
 class PostChatRoomAPI(ChatRoomAPI):
@@ -61,7 +60,7 @@ class PostChatRoomAPI(ChatRoomAPI):
                 return Response("채팅방에 접근할 권한이 없습니다.", status=status.HTTP_403_FORBIDDEN)
         except ObjectDoesNotExist:
             return Response("채팅방이 존재하지 않습니다.", status=status.HTTP_400_BAD_REQUEST)
-        return self.chat_room_render(chat_room, user)
+        return self.chat_room_render(chat_room)
     
     # 채팅방 접근 권한 부여
     def post(self, request, room_id):
@@ -71,7 +70,7 @@ class PostChatRoomAPI(ChatRoomAPI):
         except ObjectDoesNotExist:
             return Response("채팅방이 존재하지 않습니다.", status=status.HTTP_400_BAD_REQUEST)
         if self.get_room_join_permission(chat_room, user):
-            return self.chat_room_render(chat_room, user)
+            return self.chat_room_render(chat_room)
         return Response("인원수가 가득 찼거나 밴 당한 상태입니다", status=status.HTTP_400_BAD_REQUEST)
 
     # 채팅방 삭제

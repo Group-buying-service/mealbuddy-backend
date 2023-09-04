@@ -32,6 +32,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'password2',
             'address',
             'token',
+            'id',
         ]
 
     def create(self, validated_data):
@@ -50,7 +51,6 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=128, write_only=True)
     address = serializers.CharField(max_length=255, read_only=True)
     username = serializers.CharField(max_length=255, read_only=True)
-    last_login = serializers.CharField(max_length=255, read_only=True)
     token = serializers.CharField(max_length=255, read_only=True)
     id = serializers.IntegerField(read_only=True)
 
@@ -88,7 +88,6 @@ class LoginSerializer(serializers.Serializer):
         return {
             'email': user.email,
             'username': user.username,
-            'last_login': user.last_login,
             'token': user.token,
             'address': user.address,
             'id': user.id,
