@@ -13,7 +13,6 @@ class WriterSerializer(serializers.ModelSerializer):
 # Serializer 정의
 class PostSerializer(serializers.ModelSerializer):
     writer = WriterSerializer(read_only=True)
-    address = serializers.CharField(source='writer.profile.address', read_only=True)
 
     class Meta:
         model = Post
