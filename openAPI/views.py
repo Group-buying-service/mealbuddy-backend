@@ -1,5 +1,3 @@
-from django.shortcuts import render
-# from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -58,11 +56,6 @@ def weather(request):
     if weather_data:
         return Response(weather_data, status=status.HTTP_200_OK)
     return Response("예기치 않은 오류가 발생했습니다.", status=status.HTTP_408_REQUEST_TIMEOUT)
-
-
-def index(request):
-    return render(request, "openAPI/index.html")
-
 
 
 

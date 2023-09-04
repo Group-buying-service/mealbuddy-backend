@@ -1,11 +1,9 @@
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from .models import Post
-from user.models import Profile
 from chat.models import ChatRoomJoin
 from group_buying_service.utils.paginator import get_page_data
-from django.db.models import Q
-from rest_framework import status, permissions
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import PostSerializer
@@ -19,7 +17,6 @@ class Index(APIView):
         page = request.GET.get('page', 1)
         selected_category = request.GET.get('category')
         user = request.user
-        # user_profile = Profile.objects.get(user=request.user)
         user_address = user.address       
         queryset = Post.objects.filter(address=user_address) # 동일한 주소를 가진 게시글 필터링
 
