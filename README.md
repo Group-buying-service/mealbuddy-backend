@@ -113,128 +113,69 @@ Password : password123
 ### 디렉토리 구조
 
 ```
-📦backend
-├─ .gitignore
-├─ README.md
-├─ channels-redis.txt
-├─ chat
-│  ├─ __init__.py
-│  ├─ admin.py
-│  ├─ apps.py
-│  ├─ consumers.py
-│  ├─ migrations
-│  │  ├─ 0001_initial.py
-│  │  ├─ 0002_initial.py
-│  │  └─ __init__.py
-│  ├─ models.py
-│  ├─ routing.py
-│  ├─ serializer.py
-│  ├─ signal.py
-│  ├─ templates
-│  │  └─ chat
-│  │     ├─ APIindex.html
-│  │     ├─ APIroom.html
-│  │     ├─ index.html
-│  │     └─ room.html
-│  ├─ tests.py
-│  ├─ urls.py
-│  └─ views.py
-├─ core
-│  ├─ exceptions.py
-│  └─ models.py
-├─ group_buying_service
-│  ├─ API
-│  │  ├─ openAI.py
+📦mealbuddy-backend
+│  .env
+│  manage.py
+│  README.md
+│  requirements.txt
+├─chat
+│  │  admin.py
+│  │  apps.py
+│  │  consumers.py
+│  │  models.py
+│  │  routing.py
+│  │  serializer.py
+│  │  signal.py
+│  │  urls.py
+│  │  views.py
+│  └─migrations
+│     │  0001_initial.py
+│     └  0002_initial.py    
+├─core
+│  │  exceptions.py
+│  └─models.py        
+├─group_buying_service
+│  │  asgi.py
+│  │  settings.py
+│  │  urls.py
+│  │  views.py
+│  │  wsgi.py
+│  ├─API
+│  │  │  openAI.py
 │  │  └─ weather.py
-│  ├─ __init__.py
-│  ├─ asgi.py
-│  ├─ settings.py
-│  ├─ urls.py
-│  ├─ utils
-│  │  ├─ coordinate_convert.py
-│  │  └─ paginator.py
-│  ├─ views.py
-│  └─ wsgi.py
-├─ manage.py
-├─ openAPI
-│  ├─ __init__.py
-│  ├─ admin.py
-│  ├─ apps.py
-│  ├─ migrations
-│  │  └─ __init__.py
-│  ├─ templates
-│  │  └─ openAPI
-│  │     └─ index.html
-│  ├─ tests.py
-│  ├─ urls.py
-│  └─ views.py
-├─ post
-│  ├─ __init__.py
-│  ├─ admin.py
-│  ├─ apps.py
-│  ├─ migrations
-│  │  ├─ 0001_initial.py
-│  │  ├─ 0002_initial.py
-│  │  └─ __init__.py
-│  ├─ models.py
-│  ├─ serializers.py
-│  ├─ signal.py
-│  ├─ static
-│  │  ├─ chat.css
-│  │  ├─ common.css
-│  │  ├─ list.css
-│  │  ├─ login-join.css
-│  │  ├─ next.png
-│  │  ├─ prev.png
-│  │  ├─ table.css
-│  │  ├─ view.css
-│  │  └─ write.css
-│  ├─ templates
-│  │  └─ post
-│  │     ├─ form_error.html
-│  │     ├─ post_detail.html
-│  │     ├─ post_edit.html
-│  │     ├─ post_form.html
-│  │     └─ post_list.html
-│  ├─ tests.py
-│  ├─ urls.py
-│  └─ views.py
-├─ requirement.txt
-├─ static
-│  ├─ chat.css
-│  ├─ common.css
-│  ├─ list.css
-│  ├─ login-join.css
-│  ├─ next.png
-│  ├─ prev.png
-│  ├─ table.css
-│  ├─ view.css
-│  └─ write.css
-├─ templates
-│  ├─ base.html
-│  └─ index.html
-└─ user
-   ├─ __init__.py
-   ├─ admin.py
-   ├─ api
-   │  ├─ renderers.py
-   │  ├─ serializers.py
-   │  ├─ urls.py
-   │  └─ views.py
-   ├─ apps.py
-   ├─ backends.py
-   ├─ managers.py
-   ├─ migrations
-   │  ├─ 0001_initial.py
-   │  └─ __init__.py
-   ├─ models.py
-   ├─ permissions.py
-   ├─ templates
-   │  ├─ profile.html
-   │  ├─ register.html
-   │  ├─ updatepassword.html
-   │  └─ user_login.html
-   └─ tests.py
+│  └─utils
+│     │  coordinate_convert.py
+│     └─ paginator.py
+├─openAPI
+│  │  apps.py
+│  │  urls.py
+│  └─views.py
+├─post
+│  │  admin.py
+│  │  apps.py
+│  │  models.py
+│  │  serializers.py
+│  │  signal.py
+│  │  tests.py
+│  │  urls.py
+│  │  views.py
+│  └─migrations
+│     │  0001_initial.py
+│     └─0002_initial.py
+└─user
+   │  admin.py
+   │  apps.py
+   │  backends.py
+   │  managers.py
+   │  models.py
+   │  permissions.py
+   ├─api
+   │  │  renderers.py
+   │  │  serializers.py
+   │  │  urls.py
+   │  └─ views.py      
+   └─migrations
+      └─0001_initial.py
 ```
 
 ## 💡 후기
