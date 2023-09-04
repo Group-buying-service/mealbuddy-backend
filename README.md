@@ -52,6 +52,8 @@ Password : password123
 
 ## 🚩 API 명세서
 
+[API 명세서](https://github.com/Group-buying-service/mealbuddy-backend/blob/main/API%20%EB%AA%85%EC%84%B8%EC%84%9C.md)
+
 ## 🚩 API 경로
 
 **백엔드**  
