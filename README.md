@@ -26,20 +26,17 @@
 - 류형환 - 게시글 CRUD 구현, 주소와 카테고리 별 필터기능 구현
 - 임동성 - USER 관련 정보 수정 기능 구현, 다음 주소 API 연동
 
-## 📕 시작 가이드
-Requirements
- - 1
- - 2
- - 3
+## 📕 배포 주소
+- https://mealbuddy.space/
 
-Installation
+- 테스트 계정
 ```
-code
+Email : test@test.com
+Password : password123
 ```
 
 ## ⚙ 기술 스택
 <img src="https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=Django&logoColor=white"> <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=PostgreSQL&logoColor=white"> <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white"> <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white"> <img src="https://img.shields.io/badge/Daphne-5b9bd5?style=for-the-badge&logo=Daphne&logoColor=white"> <img src="https://img.shields.io/badge/gunicorn-499848?style=for-the-badge&logo=gunicorn&logoColor=white"> <img src="https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=Nginx&logoColor=white">
-
 
 
 ## 📌 주요 기능 
