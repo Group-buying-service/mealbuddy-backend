@@ -109,6 +109,8 @@ Password : password123
 |<img src="/gif/게시판.gif">|
 |   **채팅**   |
 |<img src="/gif/채팅.gif">|
+|   **에러페이지**   |
+|<img src="/img/에러페이지.png">|
 
 ## 🗜 아키텍쳐
 
