@@ -182,6 +182,9 @@ Password : password123
       └─0001_initial.py
 ```
 
+### 배포
+<img src="/img/배포환경.png">
+
 ## 💡 개발 중 장애 및 극복 방법
 
 ### WebSocket 과 JWT
