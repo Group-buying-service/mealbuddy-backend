@@ -35,6 +35,8 @@ class ChatRoomAPI(APIView):
                     chat_room_join.is_deleted = False
                     chat_room_join.save()
                 post.join_number = post.join_number + 1
+                if post.join_number == post.target_number:
+                    post.is_compelete = True
                 post.save()
                 return chat_room_join
         return False
