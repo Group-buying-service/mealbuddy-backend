@@ -21,37 +21,43 @@ BASE_MESSAGE = [
 ]
 
 
-@api_view(['POST'])
+@api_view(['POST', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def food_choicer(request):
 
-    user = request.user
-    lat = float(request.data.get('lat', 0))
-    lon = float(request.data.get('lon', 0))
-    message = request.data.get('message')
+    if request.method == 'POST':
+        user = request.user
+        lat = float(request.data.get('lat', 0))
+        lon = float(request.data.get('lon', 0))
+        message = request.data.get('message')
 
-    throttle = get_throttle(user.id)
-    if throttle == 'Too many request':
-        return Response("하루에 10번만 질문할 수 있습니다.", status=status.HTTP_429_TOO_MANY_REQUESTS)
+        throttle = get_throttle(user.id)
+        if throttle == 'Too many request':
+            return Response("하루에 10번만 질문할 수 있습니다.", status=status.HTTP_429_TOO_MANY_REQUESTS)
 
-    prompt = get_prompt(user.id)
-    
-    if prompt:
-        prompt.append({"role":"user", "content": message})
-    else:
-        prompt = init_prompt(lat, lon)
+        prompt = get_prompt(user.id)
+        
         if prompt:
             prompt.append({"role":"user", "content": message})
         else:
-            return Response("예기치 않은 오류가 발생했습니다.", status=status.HTTP_408_REQUEST_TIMEOUT)
-    
-    response = request_gpt_response(prompt)
+            prompt = init_prompt(lat, lon)
+            if prompt:
+                prompt.append({"role":"user", "content": message})
+            else:
+                return Response("예기치 않은 오류가 발생했습니다.", status=status.HTTP_408_REQUEST_TIMEOUT)
+        
+        response = request_gpt_response(prompt)
 
-    if response:
-        set_prompt(user.id, response)
-        increase_throttle(user.id, throttle)
-        return Response(response, status=status.HTTP_200_OK)
-    return Response("예기치 않은 오류가 발생했습니다.", status=status.HTTP_408_REQUEST_TIMEOUT)
+        if response:
+            set_prompt(user.id, response)
+            increase_throttle(user.id, throttle)
+            return Response(response, status=status.HTTP_200_OK)
+        return Response("예기치 않은 오류가 발생했습니다.", status=status.HTTP_408_REQUEST_TIMEOUT)
+    
+    if request.method == 'DELETE':
+        user = request.user
+        reset_prompt(user.id)
+        return Response('대화내역이 초기화 되었습니다.', status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def check(request):

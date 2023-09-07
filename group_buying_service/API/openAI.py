@@ -17,7 +17,7 @@ def request_gpt_response(messages:list):
             max_tokens=1024,
             n=1,
             stop=None,
-            temperature=1.0,
+            temperature=0.8,
         )
     except Exception as e:
         return False
