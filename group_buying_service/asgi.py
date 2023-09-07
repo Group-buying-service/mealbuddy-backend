@@ -25,6 +25,7 @@ User = get_user_model()
 application = ProtocolTypeRouter(
     {
         "https": django_asgi_app,
+        "http": django_asgi_app,
         "websocket": AllowedHostsOriginValidator(
             JWTAuthMiddleware(URLRouter(websocket_urlpatterns))
         ),
