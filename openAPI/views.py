@@ -1,9 +1,12 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
 from rest_framework import status
 from group_buying_service.API.weather import request_weather_data
 from group_buying_service.API.openAI import request_gpt_response
 from datetime import datetime
+from .foodchoicer_prompt import get_prompt, set_prompt, init_prompt, reset_prompt
 
 # Create your views here.
 
@@ -18,39 +21,49 @@ BASE_MESSAGE = [
 ]
 
 
-@api_view(['GET'])
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def food_choicer(request):
 
-    today = datetime.today()
-    lat = float(request.GET.get('lat'))
-    lon = float(request.GET.get('lon'))
+    user = request.user
+    lat = float(request.data.get('lat', 0))
+    lon = float(request.data.get('lon', 0))
+    message = request.data.get('message')
 
-    # print(lat, lon, type(lat), type(lon))
+    prompt = get_prompt(user.id)
+    
+    if prompt:
+        prompt.append({"role":"user", "content": message})
+    else:
+        prompt = init_prompt(lat, lon)
+        if prompt:
+            prompt.append({"role":"user", "content": message})
+        else:
+            return Response("예기치 않은 오류가 발생했습니다.", status=status.HTTP_408_REQUEST_TIMEOUT)
+    
+    response = request_gpt_response(prompt)
 
-    weather_data = request_weather_data(lat, lon)
-
-    if weather_data:
-        gpt_prompt = f"오늘은 {today}야. 오늘의 날씨는 다음과 같아. "
-
-        for key, value in weather_data.items():
-            gpt_prompt += f'{key}은(는) {value}. '
-
-        gpt_prompt += "적절한 메뉴를 추천해줘."
-
-        gpt_response = request_gpt_response(BASE_MESSAGE, gpt_prompt)
-
-        if gpt_response:
-            return Response(gpt_response, status=status.HTTP_200_OK)
+    if response:
+        set_prompt(user.id, prompt)
+        return Response(prompt, status=status.HTTP_200_OK)
+    
     return Response("예기치 않은 오류가 발생했습니다.", status=status.HTTP_408_REQUEST_TIMEOUT)
+
+@api_view(['GET'])
+def check(request):
+
+    user = request.user
+    prompt = get_prompt(user.id)
+
+    return Response({"test":prompt})
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def weather(request):
 
     lat = float(request.GET.get('lat'))
     lon = float(request.GET.get('lon'))
-
-    # print(lat, lon, type(lat), type(lon))
 
     weather_data = request_weather_data(lat, lon)
     if weather_data:

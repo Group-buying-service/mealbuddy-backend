@@ -37,7 +37,8 @@ SECRET_KEY = config('SECRET_KEY')
 # DEBUG = False
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['mealbuddy.space', '13.209.142.169']
+# ALLOWED_HOSTS = ['mealbuddy.space', '13.209.142.169']
+ALLOWED_HOSTS = ['*']
 
 # CORS
 # CORS_ORIGIN_ALLOW_ALL = False
@@ -163,3 +164,9 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Celery
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIME_ZONE = 'Asia/Seoul'
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True

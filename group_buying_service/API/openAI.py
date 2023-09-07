@@ -6,7 +6,9 @@ import json
 openai.api_key = config('OPENAI_API_KEY')
 
 
-def request_gpt_response(messages:str):
+def request_gpt_response(messages:list):
+
+    print(messages)
 
     try:
         response = openai.ChatCompletion.create(
@@ -17,11 +19,12 @@ def request_gpt_response(messages:str):
             stop=None,
             temperature=1.0,
         )
-    except:
+    except Exception as e:
+        print(e)
         return False
 
     response = response.choices[0]['message']['content'].strip()
 
-    messages.append({"role":"assistant"})
+    messages.append({"role":"assistant", "content": response})
 
-    return response
+    return messages
