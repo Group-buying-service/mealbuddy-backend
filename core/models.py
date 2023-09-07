@@ -1,4 +1,4 @@
-# group_buying_service > core > models.py
+# mealbuddy > core > models.py
 from django.db import models
 
 

@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from rest_framework import status
-from group_buying_service.API.weather import request_weather_data
-from group_buying_service.API.openAI import request_gpt_response
+from mealbuddy.API.weather import request_weather_data
+from mealbuddy.API.openAI import request_gpt_response
 from datetime import datetime
 from .foodchoicer_prompt import get_prompt, set_prompt, init_prompt, reset_prompt, get_throttle, increase_throttle
 

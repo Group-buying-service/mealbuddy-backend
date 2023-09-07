@@ -2,7 +2,7 @@ import redis
 import json
 from datetime import timedelta, datetime
 from decouple import config
-from group_buying_service.API.weather import request_weather_data
+from mealbuddy.API.weather import request_weather_data
 
 
 chatGPT_prompt_redis_client = redis.StrictRedis(host=config('REDIS_HOST'), port=config('REDIS_PORT'), db=1)

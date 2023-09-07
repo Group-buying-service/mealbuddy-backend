@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from .models import Post
 from chat.models import ChatRoomJoin
-from group_buying_service.utils.paginator import get_page_data
+from mealbuddy.utils.paginator import get_page_data
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response

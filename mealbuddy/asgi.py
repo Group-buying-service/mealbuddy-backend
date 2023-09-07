@@ -1,5 +1,5 @@
 """
-ASGI config for group_buying_service project.
+ASGI config for mealbuddy project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,7 +11,7 @@ import os
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "group_buying_service.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mealbuddy.settings")
 django_asgi_app = get_asgi_application()
 
 from channels.auth import AuthMiddlewareStack

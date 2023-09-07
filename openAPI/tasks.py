@@ -1,4 +1,4 @@
-from group_buying_service.celery import app
+from mealbuddy.celery import app
 from celery import shared_task
 from .foodchoicer_prompt import flush_prompt, set_prompt, get_prompt
 

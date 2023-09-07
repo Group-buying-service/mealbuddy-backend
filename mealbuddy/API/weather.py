@@ -2,7 +2,7 @@ import requests
 import json
 from datetime import datetime, timedelta
 from decouple import config
-from group_buying_service.utils.coordinate_convert import convertToXy 
+from mealbuddy.utils.coordinate_convert import convertToXy 
 
 weather_API_url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst'
 weather_API_key = config('WEATHER_API_KEY')

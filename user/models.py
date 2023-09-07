@@ -1,4 +1,4 @@
-# group_buying_service > user > models.py
+# mealbuddy > user > models.py
 import jwt
 from datetime import datetime, timedelta
 from django.conf import settings
