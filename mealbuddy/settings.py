@@ -42,7 +42,8 @@ ALLOWED_HOSTS = ['*']
 
 # CORS
 # CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = ['https://mealbuddy.space', 'https://13.209.142.169']
+# CORS_ORIGIN_WHITELIST = ['https://mealbuddy.space', 'https://13.209.142.169']
+CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:3000', 'http://localhost:3000']
 CORS_ALLOW_CREDENTIALS = True
 
 # CSRF
@@ -66,6 +67,7 @@ INSTALLED_APPS = [
     'user',
     'post',
     'openAPI',
+    'notification',
 ]
 
 MIDDLEWARE = [
