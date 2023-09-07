@@ -20,7 +20,6 @@ def request_gpt_response(messages:list):
             temperature=1.0,
         )
     except Exception as e:
-        print(e)
         return False
 
     response = response.choices[0]['message']['content'].strip()

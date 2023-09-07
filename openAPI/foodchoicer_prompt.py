@@ -18,6 +18,18 @@ BASE_MESSAGE = [
     }
 ]
 
+def get_throttle(user_id):
+    throttle = chatGPT_prompt_redis_client.get(f'chatgpt_throttle_{user_id}')
+    if throttle and int(throttle) >= 10:
+        return 'Too many request'
+    if throttle:
+        return int(throttle)
+    return 0
+
+def increase_throttle(user_id, throttle:int):
+    throttle += 1
+    chatGPT_prompt_redis_client.set(f'chatgpt_throttle_{user_id}', throttle)
+
 def init_prompt(lat, lon):
 
     prompt = BASE_MESSAGE[:]
@@ -31,7 +43,6 @@ def init_prompt(lat, lon):
         for key, value in weather_data.items():
             message += f'{key}은(는) {value}. '
 
-    
         prompt.append({"role":"system", "content": message})
 
         return prompt
@@ -44,8 +55,9 @@ def get_prompt(user_id):
     result = chatGPT_prompt_redis_client.get(f'chatgpt_prompt_{user_id}')
     return json.loads(result) if result else None
 
-def set_prompt(user_id, message:list):
-    chatGPT_prompt_redis_client.set(f'chatgpt_prompt_{user_id}', json.dumps(message, ensure_ascii=False))
+def set_prompt(user_id, messages:list):
+    chatGPT_prompt_redis_client.set(f'chatgpt_prompt_{user_id}', json.dumps(messages, ensure_ascii=False))
+
 
 def flush_prompt():
     chatGPT_prompt_redis_client.flushdb()

@@ -6,7 +6,7 @@ from rest_framework import status
 from group_buying_service.API.weather import request_weather_data
 from group_buying_service.API.openAI import request_gpt_response
 from datetime import datetime
-from .foodchoicer_prompt import get_prompt, set_prompt, init_prompt, reset_prompt
+from .foodchoicer_prompt import get_prompt, set_prompt, init_prompt, reset_prompt, get_throttle, increase_throttle
 
 # Create your views here.
 
@@ -30,6 +30,10 @@ def food_choicer(request):
     lon = float(request.data.get('lon', 0))
     message = request.data.get('message')
 
+    throttle = get_throttle(user.id)
+    if throttle == 'Too many request':
+        return Response("하루에 10번만 질문할 수 있습니다.", status=status.HTTP_429_TOO_MANY_REQUESTS)
+
     prompt = get_prompt(user.id)
     
     if prompt:
@@ -44,9 +48,9 @@ def food_choicer(request):
     response = request_gpt_response(prompt)
 
     if response:
-        set_prompt(user.id, prompt)
-        return Response(prompt, status=status.HTTP_200_OK)
-    
+        set_prompt(user.id, response)
+        increase_throttle(user.id, throttle)
+        return Response(response, status=status.HTTP_200_OK)
     return Response("예기치 않은 오류가 발생했습니다.", status=status.HTTP_408_REQUEST_TIMEOUT)
 
 @api_view(['GET'])
