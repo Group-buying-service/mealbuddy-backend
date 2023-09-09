@@ -8,8 +8,6 @@ openai.api_key = config('OPENAI_API_KEY')
 
 def request_gpt_response(messages:list):
 
-    print(messages)
-
     try:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",

@@ -4,10 +4,10 @@ from django.conf import settings
 from decouple import config
 import os
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'group_buying_service.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mealbuddy.settings')
 
 app = Celery(
-    'group_buying_service',
+    'mealbuddy',
     broker = f'redis://{config("REDIS_HOST")}:{config("REDIS_PORT")}/10',
     )
 

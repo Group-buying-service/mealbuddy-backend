@@ -1084,7 +1084,7 @@ Password : password123
 ├─core
 │  │  exceptions.py
 │  └─models.py        
-├─group_buying_service
+├─mealbuddy
 │  │  asgi.py
 │  │  settings.py
 │  │  urls.py

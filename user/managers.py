@@ -1,4 +1,4 @@
-# group_buying_service > user > managers.py
+# mealbuddy > user > managers.py
 from django.contrib.auth.models import BaseUserManager
 
 class UserManager(BaseUserManager):
